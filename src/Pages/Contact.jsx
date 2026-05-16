@@ -34,8 +34,8 @@ export default function Contact() {
 
     try {
       await emailjs.send(
-        'service_wmzv6vh',
-        'template_59kz6gm',
+        'service_zet3sm6',
+        'template_9iyoo77',
         {
           name: form.name,
           email: form.email,
@@ -43,7 +43,7 @@ export default function Contact() {
           message: form.message,
           to_email: 'deltadevelopers.team@gmail.com',
         },
-        'wSjDKC-BHzHgGl1s7'
+        'SL8N5-GMhS8DEjQhI'
       )
 
       const whatsappMessage = `
