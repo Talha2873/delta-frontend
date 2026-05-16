@@ -41,6 +41,7 @@ export default function Contact() {
           email: form.email,
           service: form.service,
           message: form.message,
+          to_email: 'deltadevelopers.team@gmail.com',
         },
         'wSjDKC-BHzHgGl1s7'
       )
@@ -56,7 +57,7 @@ export default function Contact() {
 ${form.message}
       `
 
-      const whatsappUrl = `https://wa.me/923416058248?text=${encodeURIComponent(whatsappMessage)}`
+      const whatsappUrl = `https://wa.me/19132035960?text=${encodeURIComponent(whatsappMessage)}`
 
       setSent(true)
 
