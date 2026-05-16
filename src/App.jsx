@@ -1,4 +1,4 @@
-cat > ~/Desktop/DELTA-WEBSITE/Frontend/src/App.jsx << 'EOF'
+
 import { useState, useEffect } from 'react'
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom'
 import Home from './Pages/Home'
