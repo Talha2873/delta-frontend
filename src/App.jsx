@@ -1,3 +1,4 @@
+cat > ~/Desktop/DELTA-WEBSITE/Frontend/src/App.jsx << 'EOF'
 import { useState, useEffect } from 'react'
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom'
 import Home from './Pages/Home'
@@ -33,39 +34,33 @@ function Navbar() {
 
   return (
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${scrolled ? 'bg-black/95 backdrop-blur-md border-b border-white/5' : 'bg-transparent'}`}>
-      <div className="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-3 group">
-          <img src="/delta_robotic_favicon.svg" alt="Delta Logo" className="w-12 h-12" />
-          <span className="font-black text-white text-lg tracking-tight leading-none">DELTA<span className="text-orange-500">-</span>DEVELOPERS</span>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-5 flex items-center justify-between">
+        <Link to="/" className="flex items-center gap-2 group">
+          <img src="/delta_robotic_favicon.svg" alt="Delta Logo" className="w-8 h-8 sm:w-10 sm:h-10" />
+          <span className="font-black text-white text-sm sm:text-lg tracking-tight leading-none">DELTA<span className="text-orange-500">-</span>DEVELOPERS</span>
         </Link>
 
-        {/* Desktop links */}
-        <div className="hidden md:flex items-center gap-8">
+        <div className="hidden md:flex items-center gap-6 lg:gap-8">
           {links.map(l => (
-            <Link
-              key={l.to}
-              to={l.to}
-              className={`text-sm font-medium tracking-widest uppercase transition-colors duration-200 hover:text-orange-400 ${location.pathname === l.to ? 'text-orange-400' : 'text-white/70'}`}
-            >
+            <Link key={l.to} to={l.to}
+              className={`text-xs lg:text-sm font-medium tracking-widest uppercase transition-colors duration-200 hover:text-orange-400 ${location.pathname === l.to ? 'text-orange-400' : 'text-white/70'}`}>
               {l.label}
             </Link>
           ))}
-          <Link to="/contact" className="ml-4 px-5 py-2.5 bg-orange-600 hover:bg-orange-500 text-white text-sm font-bold tracking-widest uppercase rounded-full transition-all duration-200 hover:scale-105">
+          <Link to="/contact" className="ml-2 px-4 lg:px-5 py-2 sm:py-2.5 bg-orange-600 hover:bg-orange-500 text-white text-xs lg:text-sm font-bold tracking-widest uppercase rounded-full transition-all duration-200 hover:scale-105">
             Hire Us
           </Link>
         </div>
 
-        {/* Mobile toggle */}
-        <button onClick={() => setMenuOpen(!menuOpen)} className="md:hidden text-white text-sm font-bold tracking-widest uppercase">
+        <button onClick={() => setMenuOpen(!menuOpen)} className="md:hidden text-white text-xs font-bold tracking-widest uppercase p-2">
           {menuOpen ? 'CLOSE' : 'MENU'}
         </button>
       </div>
 
-      {/* Mobile menu */}
       {menuOpen && (
-        <div className="md:hidden bg-black/98 border-t border-white/10 px-6 pb-8 pt-4 flex flex-col gap-5">
+        <div className="md:hidden bg-black/98 border-t border-white/10 px-4 pb-6 pt-4 flex flex-col gap-4">
           {links.map(l => (
-            <Link key={l.to} to={l.to} className={`text-sm font-bold tracking-widest uppercase ${location.pathname === l.to ? 'text-orange-400' : 'text-white/70'}`}>
+            <Link key={l.to} to={l.to} className={`text-sm font-bold tracking-widest uppercase py-2 ${location.pathname === l.to ? 'text-orange-400' : 'text-white/70'}`}>
               {l.label}
             </Link>
           ))}
@@ -80,13 +75,13 @@ function Navbar() {
 
 function Footer() {
   return (
-    <footer className="bg-black border-t border-white/10 py-12 px-6">
+    <footer className="bg-black border-t border-white/10 py-12 px-4 sm:px-6">
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
         <div className="flex items-center gap-3">
-          <img src="/delta_robotic_favicon.svg" alt="Delta Logo" className="w-10 h-10" />
-          <span className="font-black text-white tracking-tight">DELTA<span className="text-orange-500">-</span>DEVELOPERS</span>
+          <img src="/delta_robotic_favicon.svg" alt="Delta Logo" className="w-8 h-8 sm:w-10 sm:h-10" />
+          <span className="font-black text-white tracking-tight text-sm sm:text-base">DELTA<span className="text-orange-500">-</span>DEVELOPERS</span>
         </div>
-        <p className="text-white/40 text-sm text-center">© 2025 Delta-Developers. All rights reserved.</p>
+        <p className="text-white/40 text-xs sm:text-sm text-center">© 2025 Delta-Developers. All rights reserved.</p>
         <div className="flex gap-6">
           {['Twitter', 'LinkedIn', 'GitHub'].map(s => (
             <a key={s} href="#" className="text-white/40 hover:text-orange-400 text-sm font-medium transition-colors">{s}</a>
@@ -115,3 +110,4 @@ export default function App() {
     </Router>
   )
 }
+EOF
