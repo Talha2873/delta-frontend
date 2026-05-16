@@ -35,7 +35,7 @@ function Navbar() {
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${scrolled ? 'bg-black/95 backdrop-blur-md border-b border-white/5' : 'bg-transparent'}`}>
       <div className="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-3 group">
-          <div className="w-9 h-9 rounded-full bg-gradient-to-br from-orange-500 to-red-700 flex items-center justify-center font-black text-white text-sm tracking-tight">Δ</div>
+          <img src="/delta_robotic_favicon.svg" alt="Delta Logo" className="w-12 h-12" />
           <span className="font-black text-white text-lg tracking-tight leading-none">DELTA<span className="text-orange-500">-</span>DEVELOPERS</span>
         </Link>
 
@@ -83,7 +83,7 @@ function Footer() {
     <footer className="bg-black border-t border-white/10 py-12 px-6">
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-orange-500 to-red-700 flex items-center justify-center font-black text-white text-xs">Δ</div>
+          <img src="/delta_robotic_favicon.svg" alt="Delta Logo" className="w-10 h-10" />
           <span className="font-black text-white tracking-tight">DELTA<span className="text-orange-500">-</span>DEVELOPERS</span>
         </div>
         <p className="text-white/40 text-sm text-center">© 2025 Delta-Developers. All rights reserved.</p>
@@ -110,8 +110,6 @@ export default function App() {
           <Route path="/contact" element={<Contact />} />
         </Routes>
         <Footer />
-
-        {/* ── Delta Assistant — renders on every page, above everything ── */}
         <DeltaAssistant />
       </div>
     </Router>
