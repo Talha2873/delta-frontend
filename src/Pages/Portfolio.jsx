@@ -8,7 +8,7 @@ const teamMembers = [
   {
     name: "Muhammad Talha Ilyas",
     role: "Founder & AI Architect",
-    image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=800",
+    image: "/images/talha.jpg",
     skills: ["Python", "LangChain", "AI Engineering", "System Design"],
     progress: 95,
   },
@@ -34,11 +34,11 @@ const teamMembers = [
     progress: 92,
   },
   {
-    name: "Hamza Khan",
-    role: "Backend Engineer",
-    image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=800",
-    skills: ["Django", "FastAPI", "REST APIs", "Databases"],
-    progress: 86,
+    name: "Nayyab Rasheed",
+    role: "Frontend Developer",
+    image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=800",
+    skills: ["React", "Next.js", "Tailwind CSS", "UI Development"],
+    progress: 89,
   },
 ];
 
