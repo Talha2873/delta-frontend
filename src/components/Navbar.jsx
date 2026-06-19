@@ -1,11 +1,17 @@
 import { useState, useEffect } from "react";
 import { Link, NavLink } from "react-router-dom";
-import { Menu, X } from "lucide-react";
+import { Menu, X, ArrowRight } from "lucide-react";
+
+// TODO: keep this in sync with the same constant in Home.jsx / Contact.jsx.
+// Once you have real Calendly, consider moving this into a single
+// src/config.js file and importing it everywhere instead of duplicating.
+const CALENDLY_URL = "https://calendly.com/your-handle/intro-call";
 
 const NAV_LINKS = [
   { label: "Home", href: "/" },
   { label: "Services", href: "/services" },
   { label: "Portfolio", href: "/portfolio" },
+  { label: "Pricing", href: "/pricing" }, // NEW — see Pricing.jsx
   { label: "Expertise", href: "/expertise" },
   { label: "Contact", href: "/contact" },
 ];
@@ -30,8 +36,6 @@ export default function Navbar() {
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500;1,9..144,600&family=Inter:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap');
-
         :root{
           --cream:#fbf8f2; --cream-deep:#f3eee2; --paper:#ffffff; --ink:#1a1a16;
           --ink-soft:#3c3a32; --muted:#6b6a5c; --muted-soft:#8c8a78;
@@ -61,8 +65,13 @@ export default function Navbar() {
 
         .ww-mobile-link {
           font-family: 'Fraunces', serif;
-          font-size: 32px;
+          font-size: 30px;
           font-weight: 500;
+        }
+
+        .ww-nav a:focus-visible, .ww-nav button:focus-visible {
+          outline: 2px solid var(--terracotta);
+          outline-offset: 2px;
         }
       `}</style>
 
@@ -81,14 +90,9 @@ export default function Navbar() {
                 <polygon points="12,2 22,20 2,20" fill="#e8632c" />
               </svg>
             </div>
-
             <div className="leading-none">
-              <p className="text-[10px] font-bold tracking-[0.18em] text-[var(--terracotta-deep)] font-mono">
-                DELTA
-              </p>
-              <p className="text-[10px] font-bold tracking-[0.18em] text-[var(--ink)] font-mono">
-                DEVELOPERS
-              </p>
+              <p className="text-[10px] font-bold tracking-[0.18em] text-[var(--terracotta-deep)] font-mono">DELTA</p>
+              <p className="text-[10px] font-bold tracking-[0.18em] text-[var(--ink)] font-mono">DEVELOPERS</p>
             </div>
           </Link>
 
@@ -100,9 +104,7 @@ export default function Navbar() {
                 to={l.href}
                 className={({ isActive }) =>
                   `text-[13px] font-semibold tracking-wide transition-colors no-underline ${
-                    isActive
-                      ? "text-[var(--terracotta-deep)]"
-                      : "text-[var(--muted)] hover:text-[var(--ink)]"
+                    isActive ? "text-[var(--terracotta-deep)]" : "text-[var(--muted)] hover:text-[var(--ink)]"
                   }`
                 }
               >
@@ -116,9 +118,10 @@ export default function Navbar() {
             <Link to="/contact" className="audit-link no-underline">
               Free audit →
             </Link>
-            <Link to="/contact" className="stub no-underline">
-              Hire us
-            </Link>
+            <a href={CALENDLY_URL} target="_blank" rel="noreferrer" className="stub no-underline">
+              Book a call
+              <ArrowRight size={12} />
+            </a>
           </div>
 
           {/* MOBILE MENU TOGGLE */}
@@ -134,9 +137,9 @@ export default function Navbar() {
 
       {/* MOBILE MENU OVERLAY */}
       {menuOpen && (
-        <div className="ww-nav fixed inset-0 z-40 bg-[var(--cream)] sm:hidden flex flex-col pt-24 px-6">
-          <div className="flex flex-col gap-2">
-            {NAV_LINKS.map((l, i) => (
+        <div className="ww-nav fixed inset-0 z-40 bg-[var(--cream)] sm:hidden flex flex-col pt-24 px-6 overflow-y-auto">
+          <div className="flex flex-col gap-1">
+            {NAV_LINKS.map((l) => (
               <NavLink
                 key={l.label}
                 to={l.href}
@@ -152,10 +155,17 @@ export default function Navbar() {
             ))}
           </div>
 
-          <div className="mt-10 flex flex-col gap-3">
-            <Link to="/contact" onClick={() => setMenuOpen(false)} className="stub justify-center no-underline py-4">
-              Hire us
-            </Link>
+          <div className="mt-8 mb-10 flex flex-col gap-3">
+            <a
+              href={CALENDLY_URL}
+              target="_blank"
+              rel="noreferrer"
+              onClick={() => setMenuOpen(false)}
+              className="stub justify-center no-underline py-4"
+            >
+              Book a free call
+              <ArrowRight size={14} />
+            </a>
             <Link to="/contact" onClick={() => setMenuOpen(false)} className="audit-link text-center no-underline py-3">
               Free audit →
             </Link>

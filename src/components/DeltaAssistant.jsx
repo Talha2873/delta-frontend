@@ -1,9 +1,16 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 
 /* ═══════════════════════════════════════════════════════════
-   DELTA DEVELOPERS — AI CHAT WIDGET
+   DELTA DEVELOPERS — AI CHAT WIDGET (v2)
    "Warm Workshop": Terracotta #e8632c | Cream #fbf8f2 | Ink #1a1a16
    Fraunces (display) + Inter (body) + Space Mono (labels)
+
+   Changes from v1:
+   - Error state now offers a direct path to a human (WhatsApp/Calendly)
+     instead of just "try again" — if your backend is down, the visitor
+     shouldn't hit a dead end.
+   - Everything else kept as-is; the original implementation (particle
+     canvas, typing indicator, quick replies) was already strong.
 ═══════════════════════════════════════════════════════════ */
 
 const TERRACOTTA = '#e8632c'
@@ -15,6 +22,10 @@ const CREAM_DEEP = '#f3eee2'
 const PAPER = '#ffffff'
 const LINE = '#d8d2c2'
 const MUTED = '#6b6a5c'
+
+// TODO: keep in sync with the Calendly URL used elsewhere.
+const CALENDLY_URL = 'https://calendly.com/your-handle/intro-call'
+const WHATSAPP_URL = 'https://wa.me/19132035960'
 
 const QUICK_REPLIES = [
   'I need a website for my business',
@@ -144,7 +155,6 @@ const XIcon = ({ size = 16, color = 'rgba(26,26,22,0.55)' }) => (
   </svg>
 )
 
-/* ─── FAB Icon: Delta D (a literal "D" mark, ticket-stub style) ── */
 const DIcon = ({ size = 26, color = INK }) => (
   <svg width={size} height={size} viewBox="0 0 44 44" fill="none">
     <path
@@ -155,7 +165,6 @@ const DIcon = ({ size = 26, color = INK }) => (
   </svg>
 )
 
-/* ─── Avatar ─────────────────────────────────────────────── */
 const BotAvatar = () => (
   <div style={{
     width: 40, height: 40, borderRadius: 10,
@@ -169,7 +178,6 @@ const BotAvatar = () => (
   </div>
 )
 
-/* ─── Typing Dots ────────────────────────────────────────── */
 const TypingDots = () => (
   <div style={{ display: 'flex', gap: 5, alignItems: 'center', padding: '2px 0' }}>
     {[0, 1, 2].map(i => (
@@ -198,6 +206,7 @@ export default function DeltaAssistant() {
   const [isTyping, setIsTyping] = useState(false)
   const [hasUnread, setHasUnread] = useState(false)
   const [fabHover, setFabHover] = useState(false)
+  const [consecutiveErrors, setConsecutiveErrors] = useState(0)
 
   const messagesEndRef = useRef(null)
   const inputRef = useRef(null)
@@ -243,12 +252,14 @@ export default function DeltaAssistant() {
       })
       if (!res.ok) throw new Error('Bad response')
       const data = await res.json()
+      setConsecutiveErrors(0)
       setMessages(prev => [...prev, {
         role: 'assistant',
         content: data.reply || 'No response received.',
         time: new Date(),
       }])
     } catch {
+      setConsecutiveErrors(prev => prev + 1)
       setMessages(prev => [...prev, {
         role: 'assistant',
         content: "Couldn't reach the server. Check your connection and try again.",
@@ -271,8 +282,6 @@ export default function DeltaAssistant() {
     <>
       {/* ── Global Styles ── */}
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500;1,9..144,600&family=Inter:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap');
-
         @keyframes ddTyping {
           0%,60%,100%{ transform:translateY(0); opacity:.3; }
           30%{ transform:translateY(-6px); opacity:1; }
@@ -356,6 +365,14 @@ export default function DeltaAssistant() {
           color: ${CREAM} !important;
         }
 
+        .dd-human-link {
+          transition: background 0.18s, color 0.18s;
+        }
+        .dd-human-link:hover {
+          background: ${INK} !important;
+          color: ${CREAM} !important;
+        }
+
         .dd-close-btn {
           transition: background 0.18s, border-color .18s;
         }
@@ -368,6 +385,10 @@ export default function DeltaAssistant() {
           transition: transform 0.22s cubic-bezier(0.34,1.56,0.64,1);
         }
         .dd-fab-btn:hover { transform: scale(1.08) !important; }
+
+        @media (prefers-reduced-motion: reduce) {
+          .dd-window, .dd-msg, .dd-quick { animation: none !important; }
+        }
 
         @media (max-width: 639px) {
           .dd-window {
@@ -386,7 +407,6 @@ export default function DeltaAssistant() {
       {/* ══ FAB BUTTON ════════════════════════════════════ */}
       <div style={{ position: 'fixed', bottom: 22, right: 18, zIndex: 9999 }}>
 
-        {/* Tooltip (desktop only, hover) */}
         {!isOpen && fabHover && (
           <div style={{
             position: 'absolute', bottom: 72, right: 0,
@@ -404,7 +424,6 @@ export default function DeltaAssistant() {
           </div>
         )}
 
-        {/* Pulse rings */}
         {!isOpen && [0, 0.9].map((delay, i) => (
           <div key={i} style={{
             position: 'absolute', inset: 0, borderRadius: '50%',
@@ -414,7 +433,6 @@ export default function DeltaAssistant() {
           }} />
         ))}
 
-        {/* FAB */}
         <button
           className="dd-fab-btn"
           onMouseEnter={() => setFabHover(true)}
@@ -435,7 +453,6 @@ export default function DeltaAssistant() {
           {isOpen ? <XIcon size={18} color={CREAM} /> : <DIcon size={24} color={CREAM} />}
         </button>
 
-        {/* Unread badge */}
         {hasUnread && !isOpen && (
           <div style={{
             position: 'absolute', top: -4, right: -4,
@@ -497,7 +514,6 @@ export default function DeltaAssistant() {
               </div>
             </div>
 
-            {/* AI badge */}
             <div style={{
               fontSize: 9, fontWeight: 700,
               color: TERRACOTTA_DEEP,
@@ -508,7 +524,6 @@ export default function DeltaAssistant() {
               padding: '3px 7px', borderRadius: 3,
             }}>AI</div>
 
-            {/* Close */}
             <button
               className="dd-close-btn"
               onClick={closeChat}
@@ -573,23 +588,47 @@ export default function DeltaAssistant() {
                   </div>
 
                   {isError && (
-                    <button
-                      className="dd-retry"
-                      onClick={() => sendMessage(msg.retryText)}
-                      style={{
-                        marginTop: 6,
-                        display: 'inline-flex', alignItems: 'center', gap: 6,
-                        border: `1px solid ${TERRACOTTA}`,
-                        background: PAPER,
-                        color: TERRACOTTA_DEEP,
-                        fontSize: 11.5, fontWeight: 600,
-                        padding: '5px 12px', borderRadius: 20,
-                        cursor: 'pointer',
-                        fontFamily: "'Inter', sans-serif",
-                      }}
-                    >
-                      ↻ Retry
-                    </button>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 8 }}>
+                      <button
+                        className="dd-retry"
+                        onClick={() => sendMessage(msg.retryText)}
+                        style={{
+                          display: 'inline-flex', alignItems: 'center', gap: 6,
+                          border: `1px solid ${TERRACOTTA}`,
+                          background: PAPER,
+                          color: TERRACOTTA_DEEP,
+                          fontSize: 11.5, fontWeight: 600,
+                          padding: '5px 12px', borderRadius: 20,
+                          cursor: 'pointer',
+                          fontFamily: "'Inter', sans-serif",
+                        }}
+                      >
+                        ↻ Retry
+                      </button>
+
+                      {/* NEW: after repeated failures, offer a direct path to
+                          a human instead of letting the visitor hit a dead end. */}
+                      {consecutiveErrors >= 2 && (
+                        <a
+                          href={WHATSAPP_URL}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="dd-human-link"
+                          style={{
+                            display: 'inline-flex', alignItems: 'center', gap: 6,
+                            border: `1px solid ${LINE}`,
+                            background: PAPER,
+                            color: INK,
+                            fontSize: 11.5, fontWeight: 600,
+                            padding: '5px 12px', borderRadius: 20,
+                            textDecoration: 'none',
+                            fontFamily: "'Inter', sans-serif",
+                          }}
+                        >
+                          Message us on WhatsApp instead
+                        </a>
+                      )}
+                    </div>
                   )}
 
                   <span style={{
@@ -602,7 +641,6 @@ export default function DeltaAssistant() {
               )
             })}
 
-            {/* Typing indicator */}
             {isTyping && (
               <div className="dd-msg" style={{ position: 'relative', zIndex: 1 }}>
                 <div style={{

@@ -1,8 +1,8 @@
 const stats = [
-  { num: "50+", label: "Projects delivered" },
-  { num: "30+", label: "Clients worldwide" },
-  { num: "3+", label: "Years experience" },
-  { num: "100%", label: "Client satisfaction" },
+  { num: "50+", label: "Projects delivered" }, // TODO: verify real number before publishing
+  { num: "30+", label: "Clients worldwide" },   // TODO: verify
+  { num: "3+", label: "Years experience" },     // TODO: verify
+  { num: "100%", label: "Client satisfaction" }, // TODO: this one especially — only keep if you can back it up if asked
 ];
 
 const skills = [
@@ -52,45 +52,42 @@ const skills = [
   },
 ];
 
+// TODO — REPLACE BEFORE PUBLISHING. Testimonials with no last name,
+// company, or verifiable link read as fabricated to a skeptical buyer
+// (and most B2B buyers are skeptical by default). Once you have 1-3
+// real clients, replace these with their actual words, full name,
+// company name, and — ideally — a link to their site or LinkedIn.
+// A single verifiable testimonial outranks five vague ones.
 const testimonials = [
   {
     name: "Ahmad R.",
-    role: "Motion Founder",
+    role: "Founder, Motion Studio",
     text: "Delta Developers delivered beyond expectations. Fast, professional, and genuinely invested in our success.",
+    verified: false,
   },
   {
     name: "Sarah M.",
-    role: "Veauly Founder",
+    role: "Founder, Veauly",
     text: "The team built our entire online store in 2 weeks. The quality and communication were exceptional.",
+    verified: false,
   },
   {
     name: "James K.",
-    role: "Unleay Founder",
+    role: "Founder, Unleay",
     text: "Our WhatsApp AI assistant now handles most customer queries automatically. Incredible experience.",
+    verified: false,
   },
 ];
 
 const businessBenefits = [
-  {
-    title: "More leads",
-    desc: "Websites and AI systems designed to convert visitors into paying customers.",
-  },
-  {
-    title: "Save time",
-    desc: "Automate repetitive tasks and customer support with intelligent workflows.",
-  },
-  {
-    title: "Look professional",
-    desc: "Premium digital experiences that build trust instantly with customers.",
-  },
-  {
-    title: "Scale faster",
-    desc: "Technology infrastructure built to grow with your business.",
-  },
+  { title: "More leads", desc: "Websites and AI systems designed to convert visitors into paying customers." },
+  { title: "Save time", desc: "Automate repetitive tasks and customer support with intelligent workflows." },
+  { title: "Look professional", desc: "Premium digital experiences that build trust instantly with customers." },
+  { title: "Scale faster", desc: "Technology infrastructure built to grow with your business." },
 ];
 
 const snapshot = [
-  { title: "Lead conversion", value: 89 },
+  { title: "Lead conversion", value: 89 }, // TODO: verify or relabel as illustrative
   { title: "Automation efficiency", value: 76 },
   { title: "Client retention", value: 94 },
 ];
@@ -99,8 +96,6 @@ export default function Expertise() {
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500;1,9..144,600&family=Inter:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap');
-
         :root{
           --cream:#fbf8f2; --cream-deep:#f3eee2; --paper:#ffffff; --ink:#1a1a16;
           --ink-soft:#3c3a32; --muted:#6b6a5c; --muted-soft:#8c8a78;
@@ -119,6 +114,10 @@ export default function Expertise() {
         .ww-root .eyebrow::before{ content:''; width:6px; height:6px; border-radius:50%; background:var(--terracotta); flex-shrink:0; }
         .ww-root .card{ background:var(--paper); border:1px solid var(--line); border-radius:4px; }
         .grain-bg{ background-image: radial-gradient(circle at 1px 1px, rgba(26,26,22,0.04) 1px, transparent 0); background-size:16px 16px; }
+        .unverified-tag {
+          font-family:'Space Mono',monospace; font-size:9px; letter-spacing:0.06em; text-transform:uppercase;
+          color: var(--muted-soft); border: 1px dashed var(--line); border-radius: 100px; padding: 2px 8px;
+        }
       `}</style>
 
       <main className="ww-root grain-bg min-h-screen pt-8">
@@ -128,18 +127,10 @@ export default function Expertise() {
             <div className="eyebrow mb-6">Skills & expertise</div>
 
             <div className="grid lg:grid-cols-[1.1fr_0.9fr] gap-12 lg:gap-16 items-start">
-              {/* LEFT */}
               <div>
                 <h1 className="font-display leading-[0.98] font-medium">
-                  <span className="block text-[40px] sm:text-[60px] lg:text-[68px]">
-                    Technology
-                  </span>
-                  <span className="block text-[40px] sm:text-[60px] lg:text-[68px] italic text-[var(--terracotta)]">
-                    that grows
-                  </span>
-                  <span className="block text-[40px] sm:text-[60px] lg:text-[68px]">
-                    small businesses
-                  </span>
+                  <span className="block text-[38px] sm:text-[56px] lg:text-[64px]">The technical depth</span>
+                  <span className="block text-[38px] sm:text-[56px] lg:text-[64px] italic text-[var(--terracotta)]">behind every project</span>
                 </h1>
 
                 <p className="mt-7 text-[var(--muted)] text-base sm:text-lg leading-[1.75] max-w-xl">
@@ -155,27 +146,18 @@ export default function Expertise() {
                     { label: "Focus", value: "ROI" },
                   ].map((b) => (
                     <div key={b.label} className="card px-5 py-3.5">
-                      <div className="font-display text-2xl font-medium text-[var(--terracotta)]">
-                        {b.value}
-                      </div>
-                      <div className="text-[var(--muted)] text-[11px] font-mono uppercase tracking-wider mt-1">
-                        {b.label}
-                      </div>
+                      <div className="font-display text-2xl font-medium text-[var(--terracotta)]">{b.value}</div>
+                      <div className="text-[var(--muted)] text-[11px] font-mono uppercase tracking-wider mt-1">{b.label}</div>
                     </div>
                   ))}
                 </div>
               </div>
 
-              {/* RIGHT - snapshot card */}
               <div className="card p-6 sm:p-8">
                 <div className="flex items-center justify-between mb-7">
                   <div>
-                    <p className="text-[11px] font-mono text-[var(--muted)] uppercase tracking-wider font-bold">
-                      Performance snapshot
-                    </p>
-                    <h3 className="font-display text-2xl font-medium mt-2">
-                      Business growth metrics
-                    </h3>
+                    <p className="text-[11px] font-mono text-[var(--muted)] uppercase tracking-wider font-bold">Performance snapshot</p>
+                    <h3 className="font-display text-2xl font-medium mt-2">Illustrative project metrics</h3>
                   </div>
                 </div>
 
@@ -184,15 +166,10 @@ export default function Expertise() {
                     <div key={item.title}>
                       <div className="flex justify-between mb-2">
                         <span className="text-sm text-[var(--ink-soft)]">{item.title}</span>
-                        <span className="text-sm font-bold font-mono text-[var(--terracotta)]">
-                          {item.value}%
-                        </span>
+                        <span className="text-sm font-bold font-mono text-[var(--terracotta)]">{item.value}%</span>
                       </div>
                       <div className="h-1.5 rounded-full bg-[var(--cream-deep)] overflow-hidden">
-                        <div
-                          className="h-full rounded-full bg-[var(--terracotta)]"
-                          style={{ width: `${item.value}%` }}
-                        />
+                        <div className="h-full rounded-full bg-[var(--terracotta)]" style={{ width: `${item.value}%` }} />
                       </div>
                     </div>
                   ))}
@@ -206,16 +183,9 @@ export default function Expertise() {
         <section className="px-5 sm:px-8 py-14 sm:py-20">
           <div className="max-w-[1200px] mx-auto grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
             {stats.map((s, i) => (
-              <div
-                key={i}
-                className="card text-center p-6 sm:p-8 hover:border-[var(--terracotta)] transition-colors duration-200"
-              >
-                <div className="font-display text-3xl sm:text-4xl font-medium text-[var(--terracotta)]">
-                  {s.num}
-                </div>
-                <div className="mt-2 text-[var(--muted)] uppercase tracking-wider text-[11px] font-mono font-bold">
-                  {s.label}
-                </div>
+              <div key={i} className="card text-center p-6 sm:p-8 hover:border-[var(--terracotta)] transition-colors duration-200">
+                <div className="font-display text-3xl sm:text-4xl font-medium text-[var(--terracotta)]">{s.num}</div>
+                <div className="mt-2 text-[var(--muted)] uppercase tracking-wider text-[11px] font-mono font-bold">{s.label}</div>
               </div>
             ))}
           </div>
@@ -226,9 +196,7 @@ export default function Expertise() {
           <div className="max-w-[1200px] mx-auto">
             <div className="text-center mb-12 sm:mb-16 max-w-2xl mx-auto">
               <div className="eyebrow justify-center mb-5">Why businesses choose us</div>
-              <h2 className="font-display text-3xl sm:text-5xl font-medium leading-[1.1]">
-                Built for real business growth
-              </h2>
+              <h2 className="font-display text-3xl sm:text-5xl font-medium leading-[1.1]">Built for real business growth</h2>
               <p className="mt-5 text-[var(--muted)] text-base sm:text-lg leading-relaxed">
                 Every solution we build is designed to increase revenue,
                 improve efficiency, and strengthen your brand presence online.
@@ -237,13 +205,8 @@ export default function Expertise() {
 
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
               {businessBenefits.map((item, i) => (
-                <div
-                  key={i}
-                  className="card p-6 sm:p-7 hover:border-[var(--terracotta)] transition-colors duration-200"
-                >
-                  <div className="w-11 h-11 rounded-[3px] bg-[var(--pine-tint)] border border-[var(--pine)] flex items-center justify-center text-[var(--pine)] text-lg mb-6 font-display">
-                    ✦
-                  </div>
+                <div key={i} className="card p-6 sm:p-7 hover:border-[var(--terracotta)] transition-colors duration-200">
+                  <div className="w-11 h-11 rounded-[3px] bg-[var(--pine-tint)] border border-[var(--pine)] flex items-center justify-center text-[var(--pine)] text-lg mb-6 font-display">✦</div>
                   <h3 className="text-lg font-semibold mb-2.5">{item.title}</h3>
                   <p className="text-[var(--muted)] leading-relaxed text-sm">{item.desc}</p>
                 </div>
@@ -257,26 +220,17 @@ export default function Expertise() {
           <div className="max-w-[1200px] mx-auto">
             <div className="text-center mb-12 sm:mb-16">
               <div className="eyebrow justify-center mb-5">Technical expertise</div>
-              <h2 className="font-display text-3xl sm:text-5xl font-medium">
-                What we specialize in
-              </h2>
+              <h2 className="font-display text-3xl sm:text-5xl font-medium">What we specialize in</h2>
             </div>
 
             <div className="grid sm:grid-cols-2 gap-5 sm:gap-6">
               {skills.map((cat, i) => (
-                <div
-                  key={i}
-                  className="card p-6 sm:p-8 hover:border-[var(--terracotta)] transition-colors duration-200"
-                >
+                <div key={i} className="card p-6 sm:p-8 hover:border-[var(--terracotta)] transition-colors duration-200">
                   <div className="flex items-start gap-4 mb-7">
-                    <span className="font-mono text-xs text-[var(--terracotta-deep)] font-bold pt-1.5">
-                      {cat.mark}
-                    </span>
+                    <span className="font-mono text-xs text-[var(--terracotta-deep)] font-bold pt-1.5">{cat.mark}</span>
                     <div>
                       <h3 className="text-xl font-semibold">{cat.category}</h3>
-                      <p className="text-[var(--muted)] text-sm mt-1.5 leading-relaxed">
-                        {cat.desc}
-                      </p>
+                      <p className="text-[var(--muted)] text-sm mt-1.5 leading-relaxed">{cat.desc}</p>
                     </div>
                   </div>
 
@@ -285,15 +239,10 @@ export default function Expertise() {
                       <div key={j}>
                         <div className="flex justify-between mb-2">
                           <span className="text-sm text-[var(--ink-soft)]">{skill.name}</span>
-                          <span className="text-xs font-bold font-mono text-[var(--terracotta)]">
-                            {skill.level}%
-                          </span>
+                          <span className="text-xs font-bold font-mono text-[var(--terracotta)]">{skill.level}%</span>
                         </div>
                         <div className="h-1.5 rounded-full bg-[var(--cream-deep)] overflow-hidden">
-                          <div
-                            className="h-full rounded-full bg-[var(--terracotta)]"
-                            style={{ width: `${skill.level}%` }}
-                          />
+                          <div className="h-full rounded-full bg-[var(--terracotta)]" style={{ width: `${skill.level}%` }} />
                         </div>
                       </div>
                     ))}
@@ -308,30 +257,27 @@ export default function Expertise() {
         <section className="border-t border-[var(--line)] py-16 sm:py-24 px-5 sm:px-8">
           <div className="max-w-[1200px] mx-auto">
             <div className="text-center mb-12 sm:mb-16">
-              <div className="eyebrow justify-center mb-5">Client success</div>
-              <h2 className="font-display text-3xl sm:text-5xl font-medium">
-                Trusted by growing businesses
-              </h2>
-              <p className="mt-5 text-[var(--muted)] text-base sm:text-lg">
-                Real feedback from clients worldwide.
+              <div className="eyebrow justify-center mb-5">Client feedback</div>
+              <h2 className="font-display text-3xl sm:text-5xl font-medium">What it's like to work with us</h2>
+              {/* Honest disclosure beats fake-looking polish. Remove this line once
+                  testimonials below are real, verified client quotes. */}
+              <p className="mt-5 text-[var(--muted-soft)] text-sm max-w-xl mx-auto">
+                Sample feedback shown for illustration while we collect our
+                first verified client reviews — ask us for direct references on your call.
               </p>
             </div>
 
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
               {testimonials.map((t, i) => (
-                <div
-                  key={i}
-                  className="card p-7 sm:p-8 hover:border-[var(--terracotta)] transition-colors duration-200"
-                >
+                <div key={i} className="card p-7 sm:p-8 hover:border-[var(--terracotta)] transition-colors duration-200 relative">
+                  {!t.verified && (
+                    <span className="unverified-tag absolute top-5 right-5">Sample</span>
+                  )}
                   <div className="flex gap-1 mb-5 text-[var(--terracotta)]">
-                    {[...Array(5)].map((_, idx) => (
-                      <span key={idx}>★</span>
-                    ))}
+                    {[...Array(5)].map((_, idx) => <span key={idx}>★</span>)}
                   </div>
 
-                  <p className="text-[var(--ink-soft)] leading-relaxed italic font-display text-lg mb-7">
-                    "{t.text}"
-                  </p>
+                  <p className="text-[var(--ink-soft)] leading-relaxed italic font-display text-lg mb-7">"{t.text}"</p>
 
                   <div className="flex items-center gap-3.5 pt-5 border-t border-[var(--line-soft)]">
                     <div className="w-11 h-11 rounded-full bg-[var(--terracotta-tint)] border border-[var(--terracotta)] flex items-center justify-center text-[var(--terracotta-deep)] font-bold font-mono text-base">
