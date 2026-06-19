@@ -17,24 +17,15 @@ export default function Contact() {
 
   useEffect(() => {
     const serviceFromUrl = searchParams.get("service");
-
     if (serviceFromUrl) {
-      setForm((prev) => ({
-        ...prev,
-        service: serviceFromUrl,
-      }));
+      setForm((prev) => ({ ...prev, service: serviceFromUrl }));
     }
   }, [searchParams]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (
-      !form.name ||
-      !form.email ||
-      !form.service ||
-      !form.message
-    ) {
+    if (!form.name || !form.email || !form.service || !form.message) {
       alert("Please fill all fields");
       return;
     }
@@ -56,13 +47,13 @@ export default function Contact() {
       );
 
       const whatsappMessage = `
-🚀 New Project Inquiry
+New project inquiry
 
-👤 Name: ${form.name}
-📧 Email: ${form.email}
-💼 Service: ${form.service}
+Name: ${form.name}
+Email: ${form.email}
+Service: ${form.service}
 
-📝 Project Details:
+Project details:
 ${form.message}
       `;
 
@@ -72,370 +63,275 @@ ${form.message}
 
       setSent(true);
 
-      setForm({
-        name: "",
-        email: "",
-        service: "",
-        message: "",
-      });
+      setForm({ name: "", email: "", service: "", message: "" });
 
       window.open(whatsappUrl, "_blank");
     } catch (error) {
       console.error(error);
-
-      alert(
-        error?.text ||
-          error?.message ||
-          "Failed to send message"
-      );
+      alert(error?.text || error?.message || "Failed to send message");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <main className="relative min-h-screen bg-[#060f07] text-white overflow-hidden">
+    <>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500;1,9..144,600&family=Inter:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap');
 
-      {/* BACKGROUND GLOW */}
+        :root{
+          --cream:#fbf8f2; --cream-deep:#f3eee2; --paper:#ffffff; --ink:#1a1a16;
+          --ink-soft:#3c3a32; --muted:#6b6a5c; --muted-soft:#8c8a78;
+          --terracotta:#e8632c; --terracotta-deep:#c44d1c; --terracotta-tint:#fbe4d6;
+          --pine:#2f4f3a; --pine-deep:#203a29; --pine-tint:#e3ebe2; --line:#d8d2c2; --line-soft:#e7e2d4;
+        }
+        body{ margin:0; background:var(--cream); }
+        .ww-root{ background:var(--cream); color:var(--ink); font-family:'Inter',sans-serif; }
+        .ww-root .font-display{ font-family:'Fraunces',serif; }
+        .ww-root .font-mono{ font-family:'Space Mono',monospace; }
+        .ww-root .eyebrow{
+          font-family:'Space Mono',monospace; font-size:11px; letter-spacing:0.14em;
+          text-transform:uppercase; color:var(--terracotta-deep); font-weight:700;
+          display:inline-flex; align-items:center; gap:8px;
+        }
+        .ww-root .eyebrow::before{ content:''; width:6px; height:6px; border-radius:50%; background:var(--terracotta); flex-shrink:0; }
+        .ww-root .card{ background:var(--paper); border:1px solid var(--line); border-radius:4px; }
+        .grain-bg{ background-image: radial-gradient(circle at 1px 1px, rgba(26,26,22,0.04) 1px, transparent 0); background-size:16px 16px; }
 
-      <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-[#b8ff57]/10 blur-[120px] rounded-full pointer-events-none" />
+        .ww-root input, .ww-root select, .ww-root textarea{
+          font-family:'Inter',sans-serif;
+          background:var(--cream);
+          border:1px solid var(--line);
+          border-radius:3px;
+          color:var(--ink);
+          width:100%;
+          outline:none;
+          transition:border-color .2s ease;
+        }
+        .ww-root input::placeholder, .ww-root textarea::placeholder{ color:var(--muted-soft); }
+        .ww-root input:focus, .ww-root select:focus, .ww-root textarea:focus{ border-color:var(--terracotta); }
+      `}</style>
 
-      <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-[#0d3a0f]/20 blur-[120px] rounded-full pointer-events-none" />
+      <main className="ww-root grain-bg relative min-h-screen">
+        {/* HERO */}
+        <section className="px-5 sm:px-8 pt-14 sm:pt-20 pb-12 sm:pb-16 border-b border-[var(--line)]">
+          <div className="max-w-[1200px] mx-auto">
+            <div className="eyebrow mb-6">Start your project</div>
 
-      {/* HERO */}
+            <h1 className="font-display leading-[0.98] font-medium text-[40px] sm:text-[64px] max-w-3xl">
+              Let's build something
+              <span className="block italic text-[var(--terracotta)]">exceptional</span>
+            </h1>
 
-      <section className="relative pt-36 pb-20 px-6 border-b border-[#1e3a20]">
-        <div className="max-w-7xl mx-auto">
-
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[#2a4a2c] bg-[#0d1f0e] text-[#b8ff57] text-xs font-bold tracking-[0.25em] mb-8">
-            <span className="w-2 h-2 rounded-full bg-[#b8ff57] animate-pulse" />
-            START YOUR PROJECT
+            <p className="mt-7 text-[var(--muted)] text-base sm:text-lg max-w-2xl leading-[1.75]">
+              We craft AI systems, premium websites, automations, and
+              scalable digital products designed to increase revenue and
+              elevate your business.
+            </p>
           </div>
+        </section>
 
-          <h1 className="font-black leading-none text-5xl md:text-7xl max-w-4xl">
-            Let's Build Something
-            <span className="block text-[#b8ff57] italic font-serif">
-              Exceptional
-            </span>
-          </h1>
-
-          <p className="mt-8 text-[#7f9b82] text-lg max-w-2xl leading-relaxed">
-            We craft AI systems, premium websites,
-            automations, and scalable digital products
-            designed to increase revenue and elevate your
-            business.
-          </p>
-        </div>
-      </section>
-
-      {/* CONTENT */}
-
-      <section className="relative px-6 py-20">
-        <div className="max-w-7xl mx-auto grid lg:grid-cols-[0.9fr_1.1fr] gap-10">
-
-          {/* LEFT SIDE */}
-
-          <div className="space-y-5">
-
-            {/* INFO CARD */}
-
-            <div className="rounded-3xl border border-[#1e3a20] bg-[#0d1f0e]/70 backdrop-blur-xl p-8">
-
-              <div className="flex items-center gap-3 mb-8">
-                <div className="w-12 h-12 rounded-2xl bg-[#b8ff57] text-black flex items-center justify-center text-xl">
-                  ⚡
+        {/* CONTENT */}
+        <section className="px-5 sm:px-8 py-14 sm:py-20">
+          <div className="max-w-[1200px] mx-auto grid lg:grid-cols-[0.9fr_1.1fr] gap-8 lg:gap-10">
+            {/* LEFT SIDE */}
+            <div className="space-y-5 order-2 lg:order-1">
+              <div className="card p-6 sm:p-8">
+                <div className="flex items-center gap-3.5 mb-7">
+                  <div className="w-11 h-11 rounded-[3px] bg-[var(--pine)] text-[var(--cream)] flex items-center justify-center font-mono font-bold text-sm">
+                    DD
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-lg">Why work with us</h3>
+                    <p className="text-[var(--muted)] text-sm mt-0.5">
+                      Focused on growth, speed, and premium execution.
+                    </p>
+                  </div>
                 </div>
 
-                <div>
-                  <h3 className="font-black text-xl">
-                    Why Work With Us
-                  </h3>
-
-                  <p className="text-[#6f8d72] text-sm mt-1">
-                    Focused on growth, speed, and premium
-                    execution.
-                  </p>
+                <div className="space-y-4">
+                  {[
+                    {
+                      title: "Fast delivery",
+                      desc: "High-quality projects delivered quickly without compromising design or performance.",
+                    },
+                    {
+                      title: "Premium UI/UX",
+                      desc: "Modern interfaces built to increase trust, engagement, and conversions.",
+                    },
+                    {
+                      title: "Business-focused",
+                      desc: "Every feature is designed around real business outcomes and ROI.",
+                    },
+                    {
+                      title: "Long-term support",
+                      desc: "Ongoing support, improvements, and scaling assistance after launch.",
+                    },
+                  ].map((item, i) => (
+                    <div
+                      key={i}
+                      className="flex gap-4 border border-[var(--line-soft)] bg-[var(--cream)] rounded-[3px] p-4 sm:p-5"
+                    >
+                      <span className="font-mono text-xs font-bold text-[var(--terracotta-deep)] pt-1">
+                        0{i + 1}
+                      </span>
+                      <div>
+                        <h4 className="font-semibold text-sm">{item.title}</h4>
+                        <p className="text-sm text-[var(--muted)] mt-1 leading-relaxed">
+                          {item.desc}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
 
-              <div className="space-y-5">
-
+              {/* QUICK STATS */}
+              <div className="grid grid-cols-3 gap-3 sm:gap-4">
                 {[
-                  {
-                    title: "Fast Delivery",
-                    desc: "High-quality projects delivered quickly without compromising design or performance.",
-                  },
-                  {
-                    title: "Premium UI/UX",
-                    desc: "Modern interfaces built to increase trust, engagement, and conversions.",
-                  },
-                  {
-                    title: "Business-Focused",
-                    desc: "Every feature is designed around real business outcomes and ROI.",
-                  },
-                  {
-                    title: "Long-Term Support",
-                    desc: "Ongoing support, improvements, and scaling assistance after launch.",
-                  },
+                  { value: "50+", label: "Projects" },
+                  { value: "30+", label: "Clients" },
+                  { value: "24/7", label: "Support" },
                 ].map((item, i) => (
-                  <div
-                    key={i}
-                    className="flex gap-4 border border-[#1a311b] bg-[#0a160b] rounded-2xl p-5 hover:border-[#b8ff57]/40 transition-all"
-                  >
-                    <div className="w-10 h-10 rounded-xl bg-[#b8ff57]/10 border border-[#b8ff57]/20 flex items-center justify-center text-[#b8ff57] font-black">
-                      0{i + 1}
+                  <div key={i} className="card text-center p-4 sm:p-5">
+                    <div className="font-display text-xl sm:text-2xl font-medium text-[var(--terracotta)]">
+                      {item.value}
                     </div>
-
-                    <div>
-                      <h4 className="font-bold text-white">
-                        {item.title}
-                      </h4>
-
-                      <p className="text-sm text-[#6f8d72] mt-1 leading-relaxed">
-                        {item.desc}
-                      </p>
+                    <div className="text-[10px] sm:text-[11px] tracking-wider text-[var(--muted)] uppercase mt-1 font-mono font-bold">
+                      {item.label}
                     </div>
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* QUICK STATS */}
+            {/* FORM */}
+            <div className="order-1 lg:order-2">
+              <div className="card p-6 sm:p-10">
+                {!sent ? (
+                  <>
+                    <div className="mb-8 sm:mb-10">
+                      <div className="eyebrow mb-4">Contact form</div>
 
-            <div className="grid grid-cols-3 gap-4">
+                      <h2 className="font-display text-3xl sm:text-4xl font-medium leading-tight">
+                        Tell us about
+                        <span className="block italic text-[var(--terracotta)]">your vision</span>
+                      </h2>
 
-              {[
-                {
-                  value: "50+",
-                  label: "Projects",
-                },
-                {
-                  value: "30+",
-                  label: "Clients",
-                },
-                {
-                  value: "24/7",
-                  label: "Support",
-                },
-              ].map((item, i) => (
-                <div
-                  key={i}
-                  className="rounded-2xl border border-[#1e3a20] bg-[#0d1f0e]/70 backdrop-blur-xl p-5 text-center"
-                >
-                  <div className="text-2xl font-black text-[#b8ff57]">
-                    {item.value}
-                  </div>
+                      <p className="text-[var(--muted)] mt-4 max-w-lg leading-relaxed">
+                        Share your project details and we'll respond with
+                        strategy, timeline, and the best solution for your
+                        business.
+                      </p>
+                    </div>
 
-                  <div className="text-xs tracking-widest text-[#6f8d72] uppercase mt-1">
-                    {item.label}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+                    <form onSubmit={handleSubmit} className="space-y-5 sm:space-y-6">
+                      <div>
+                        <label className="block text-sm font-semibold mb-2.5">
+                          Full name
+                        </label>
+                        <input
+                          type="text"
+                          placeholder="John Anderson"
+                          value={form.name}
+                          onChange={(e) => setForm({ ...form, name: e.target.value })}
+                          className="px-4 py-3.5"
+                        />
+                      </div>
 
-          {/* FORM */}
+                      <div>
+                        <label className="block text-sm font-semibold mb-2.5">
+                          Email address
+                        </label>
+                        <input
+                          type="email"
+                          placeholder="you@example.com"
+                          value={form.email}
+                          onChange={(e) => setForm({ ...form, email: e.target.value })}
+                          className="px-4 py-3.5"
+                        />
+                      </div>
 
-          <div className="relative">
+                      <div>
+                        <label className="block text-sm font-semibold mb-2.5">
+                          Select service
+                        </label>
+                        <select
+                          value={form.service}
+                          onChange={(e) => setForm({ ...form, service: e.target.value })}
+                          className="px-4 py-3.5"
+                        >
+                          <option value="" disabled>
+                            Choose a service
+                          </option>
 
-            <div className="absolute inset-0 bg-[#b8ff57]/5 blur-3xl rounded-[40px]" />
+                          <optgroup label="AI & Automation">
+                            <option>AI Chatbot Integration</option>
+                            <option>AI Business Automation</option>
+                            <option>WhatsApp AI Chatbots</option>
+                            <option>AI Email Automation</option>
+                          </optgroup>
 
-            <div className="relative rounded-[32px] border border-[#1e3a20] bg-[#0d1f0e]/80 backdrop-blur-2xl p-8 md:p-10 shadow-2xl shadow-black/50">
+                          <optgroup label="Web Development">
+                            <option>Business Website</option>
+                            <option>E-Commerce Store</option>
+                            <option>Dashboard & Admin Panel</option>
+                            <option>Full Stack Web App</option>
+                          </optgroup>
 
-              {!sent ? (
-                <>
-                  <div className="mb-10">
+                          <optgroup label="Other">
+                            <option>Custom Solution</option>
+                          </optgroup>
+                        </select>
+                      </div>
 
-                    <p className="text-[#b8ff57] text-xs font-bold tracking-[0.25em] uppercase mb-3">
-                      Contact Form
-                    </p>
+                      <div>
+                        <label className="block text-sm font-semibold mb-2.5">
+                          Project details
+                        </label>
+                        <textarea
+                          rows={6}
+                          placeholder="Tell us about your project goals, features, timeline, and business requirements..."
+                          value={form.message}
+                          onChange={(e) => setForm({ ...form, message: e.target.value })}
+                          className="px-4 py-3.5 resize-none"
+                        />
+                      </div>
 
-                    <h2 className="text-4xl font-black leading-tight">
-                      Tell Us About
-                      <span className="block text-[#b8ff57]">
-                        Your Vision
-                      </span>
+                      <button
+                        type="submit"
+                        disabled={loading}
+                        className="w-full h-14 rounded-[3px] bg-[var(--terracotta)] text-[var(--cream)] font-bold tracking-wide hover:bg-[var(--terracotta-deep)] transition-all disabled:opacity-50"
+                      >
+                        {loading ? "Sending..." : "Send project inquiry →"}
+                      </button>
+
+                      <p className="text-center text-sm text-[var(--muted)]">
+                        Average response time: under 24 hours
+                      </p>
+                    </form>
+                  </>
+                ) : (
+                  <div className="py-16 sm:py-24 text-center">
+                    <div className="w-20 h-20 rounded-full bg-[var(--pine-tint)] border border-[var(--pine)] flex items-center justify-center text-[var(--pine)] text-3xl mx-auto mb-7 font-display">
+                      ✓
+                    </div>
+
+                    <h2 className="font-display text-4xl sm:text-5xl font-medium text-[var(--terracotta)] mb-4">
+                      Message sent
                     </h2>
 
-                    <p className="text-[#6f8d72] mt-4 max-w-lg">
-                      Share your project details and we'll
-                      respond with strategy, timeline, and
-                      the best solution for your business.
+                    <p className="text-[var(--muted)] text-base sm:text-lg max-w-md mx-auto leading-relaxed">
+                      Thank you for reaching out. We'll review your project
+                      and contact you shortly.
                     </p>
                   </div>
-
-                  <form
-                    onSubmit={handleSubmit}
-                    className="space-y-6"
-                  >
-
-                    {/* NAME */}
-
-                    <div>
-                      <label className="block text-sm font-semibold text-[#d2e7d3] mb-3">
-                        Full Name
-                      </label>
-
-                      <input
-                        type="text"
-                        placeholder="John Anderson"
-                        value={form.name}
-                        onChange={(e) =>
-                          setForm({
-                            ...form,
-                            name: e.target.value,
-                          })
-                        }
-                        className="w-full bg-[#09120a] border border-[#223724] rounded-2xl px-5 py-4 text-white placeholder-[#4f6a52] outline-none focus:border-[#b8ff57] transition-all"
-                      />
-                    </div>
-
-                    {/* EMAIL */}
-
-                    <div>
-                      <label className="block text-sm font-semibold text-[#d2e7d3] mb-3">
-                        Email Address
-                      </label>
-
-                      <input
-                        type="email"
-                        placeholder="you@example.com"
-                        value={form.email}
-                        onChange={(e) =>
-                          setForm({
-                            ...form,
-                            email: e.target.value,
-                          })
-                        }
-                        className="w-full bg-[#09120a] border border-[#223724] rounded-2xl px-5 py-4 text-white placeholder-[#4f6a52] outline-none focus:border-[#b8ff57] transition-all"
-                      />
-                    </div>
-
-                    {/* SERVICE */}
-
-                    <div>
-                      <label className="block text-sm font-semibold text-[#d2e7d3] mb-3">
-                        Select Service
-                      </label>
-
-                      <select
-                        value={form.service}
-                        onChange={(e) =>
-                          setForm({
-                            ...form,
-                            service: e.target.value,
-                          })
-                        }
-                        className="w-full bg-[#09120a] border border-[#223724] rounded-2xl px-5 py-4 text-white outline-none focus:border-[#b8ff57] transition-all"
-                      >
-                        <option value="" disabled>
-                          Choose a Service
-                        </option>
-
-                        <optgroup label="AI & Automation">
-                          <option>
-                            AI Chatbot Integration
-                          </option>
-
-                          <option>
-                            AI Business Automation
-                          </option>
-
-                          <option>
-                            WhatsApp AI Chatbots
-                          </option>
-
-                          <option>
-                            AI Email Automation
-                          </option>
-                        </optgroup>
-
-                        <optgroup label="Web Development">
-                          <option>
-                            Business Website
-                          </option>
-
-                          <option>
-                            E-Commerce Store
-                          </option>
-
-                          <option>
-                            Dashboard & Admin Panel
-                          </option>
-
-                          <option>
-                            Full Stack Web App
-                          </option>
-                        </optgroup>
-
-                        <optgroup label="Other">
-                          <option>
-                            Custom Solution
-                          </option>
-                        </optgroup>
-                      </select>
-                    </div>
-
-                    {/* MESSAGE */}
-
-                    <div>
-                      <label className="block text-sm font-semibold text-[#d2e7d3] mb-3">
-                        Project Details
-                      </label>
-
-                      <textarea
-                        rows={7}
-                        placeholder="Tell us about your project goals, features, timeline, and business requirements..."
-                        value={form.message}
-                        onChange={(e) =>
-                          setForm({
-                            ...form,
-                            message: e.target.value,
-                          })
-                        }
-                        className="w-full bg-[#09120a] border border-[#223724] rounded-2xl px-5 py-4 text-white placeholder-[#4f6a52] outline-none resize-none focus:border-[#b8ff57] transition-all"
-                      />
-                    </div>
-
-                    {/* BUTTON */}
-
-                    <button
-                      type="submit"
-                      disabled={loading}
-                      className="w-full h-16 rounded-2xl bg-[#b8ff57] text-black font-black tracking-widest uppercase hover:bg-[#d6ff8c] transition-all hover:scale-[1.01] disabled:opacity-50"
-                    >
-                      {loading
-                        ? "Sending..."
-                        : "Send Project Inquiry →"}
-                    </button>
-
-                    <p className="text-center text-sm text-[#5e775f]">
-                      Average response time: under 24 hours
-                    </p>
-                  </form>
-                </>
-              ) : (
-                <div className="py-24 text-center">
-
-                  <div className="w-24 h-24 rounded-full bg-[#b8ff57]/10 border border-[#b8ff57]/20 flex items-center justify-center text-5xl mx-auto mb-8">
-                    ✅
-                  </div>
-
-                  <h2 className="text-5xl font-black text-[#b8ff57] mb-5">
-                    Message Sent
-                  </h2>
-
-                  <p className="text-[#7f9b82] text-lg max-w-md mx-auto leading-relaxed">
-                    Thank you for reaching out. We'll
-                    review your project and contact you
-                    shortly.
-                  </p>
-                </div>
-              )}
+                )}
+              </div>
             </div>
           </div>
-        </div>
-      </section>
-    </main>
+        </section>
+      </main>
+    </>
   );
 }

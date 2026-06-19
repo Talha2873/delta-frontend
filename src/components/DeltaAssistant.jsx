@@ -2,14 +2,19 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 
 /* ═══════════════════════════════════════════════════════════
    DELTA DEVELOPERS — AI CHAT WIDGET
-   Brand: Lime #a1da30 | Dark #0c1208 | Outfit + Space Grotesk
+   "Warm Workshop": Terracotta #e8632c | Cream #fbf8f2 | Ink #1a1a16
+   Fraunces (display) + Inter (body) + Space Mono (labels)
 ═══════════════════════════════════════════════════════════ */
 
-const BRAND = '#a1da30'
-const BRAND_DIM = 'rgba(161,218,48,'
-const BG_DEEP = '#0c1208'
-const BG_MID = '#111a08'
-const BG_CARD = '#0f1a09'
+const TERRACOTTA = '#e8632c'
+const TERRACOTTA_DEEP = '#c44d1c'
+const TERRACOTTA_DIM = 'rgba(232,99,44,'
+const INK = '#1a1a16'
+const CREAM = '#fbf8f2'
+const CREAM_DEEP = '#f3eee2'
+const PAPER = '#ffffff'
+const LINE = '#d8d2c2'
+const MUTED = '#6b6a5c'
 
 const QUICK_REPLIES = [
   'I need a website for my business',
@@ -40,24 +45,19 @@ const ParticleCanvas = () => {
     }
     window.addEventListener('resize', resize)
 
-    // Particles
-    const PARTICLES = Array.from({ length: 38 }, () => ({
+    const PARTICLES = Array.from({ length: 28 }, () => ({
       x: Math.random() * W,
       y: Math.random() * H,
-      r: Math.random() * 1.8 + 0.4,
-      vx: (Math.random() - 0.5) * 0.28,
-      vy: (Math.random() - 0.5) * 0.28,
-      alpha: Math.random() * 0.55 + 0.1,
+      r: Math.random() * 1.6 + 0.4,
+      vx: (Math.random() - 0.5) * 0.22,
+      vy: (Math.random() - 0.5) * 0.22,
+      alpha: Math.random() * 0.4 + 0.08,
     }))
 
-    // Grid lines
     const GRID_LINES = []
-    const GRID_SPACING = 36
+    const GRID_SPACING = 38
     for (let x = 0; x < 600; x += GRID_SPACING) GRID_LINES.push({ type: 'v', pos: x })
     for (let y = 0; y < 700; y += GRID_SPACING) GRID_LINES.push({ type: 'h', pos: y })
-
-    // Scanline
-    let scanY = 0
 
     let frame = 0
     const draw = () => {
@@ -65,26 +65,15 @@ const ParticleCanvas = () => {
       frame++
       ctx.clearRect(0, 0, W, H)
 
-      // Grid
       ctx.lineWidth = 0.5
       GRID_LINES.forEach(l => {
-        ctx.strokeStyle = `rgba(161,218,48,0.045)`
+        ctx.strokeStyle = 'rgba(232,99,44,0.035)'
         ctx.beginPath()
         if (l.type === 'v') { ctx.moveTo(l.pos, 0); ctx.lineTo(l.pos, H) }
         else { ctx.moveTo(0, l.pos); ctx.lineTo(W, l.pos) }
         ctx.stroke()
       })
 
-      // Scanline sweep
-      scanY = (scanY + 0.6) % (H + 120)
-      const grad = ctx.createLinearGradient(0, scanY - 60, 0, scanY + 60)
-      grad.addColorStop(0, 'rgba(161,218,48,0)')
-      grad.addColorStop(0.5, 'rgba(161,218,48,0.04)')
-      grad.addColorStop(1, 'rgba(161,218,48,0)')
-      ctx.fillStyle = grad
-      ctx.fillRect(0, scanY - 60, W, 120)
-
-      // Particles + connections
       PARTICLES.forEach(p => {
         p.x += p.vx
         p.y += p.vy
@@ -93,23 +82,21 @@ const ParticleCanvas = () => {
         if (p.y < 0) p.y = H
         if (p.y > H) p.y = 0
 
-        // Pulse alpha
-        p.alpha = 0.15 + 0.35 * Math.abs(Math.sin(frame * 0.012 + p.x))
+        p.alpha = 0.1 + 0.25 * Math.abs(Math.sin(frame * 0.012 + p.x))
 
         ctx.beginPath()
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2)
-        ctx.fillStyle = `rgba(161,218,48,${p.alpha})`
+        ctx.fillStyle = `rgba(232,99,44,${p.alpha})`
         ctx.fill()
       })
 
-      // Connection lines between close particles
       for (let i = 0; i < PARTICLES.length; i++) {
         for (let j = i + 1; j < PARTICLES.length; j++) {
           const dx = PARTICLES[i].x - PARTICLES[j].x
           const dy = PARTICLES[i].y - PARTICLES[j].y
           const dist = Math.sqrt(dx * dx + dy * dy)
           if (dist < 90) {
-            ctx.strokeStyle = `rgba(161,218,48,${0.08 * (1 - dist / 90)})`
+            ctx.strokeStyle = `rgba(232,99,44,${0.06 * (1 - dist / 90)})`
             ctx.lineWidth = 0.6
             ctx.beginPath()
             ctx.moveTo(PARTICLES[i].x, PARTICLES[i].y)
@@ -118,19 +105,6 @@ const ParticleCanvas = () => {
           }
         }
       }
-
-      // Corner glow orbs
-      const orb1 = ctx.createRadialGradient(0, 0, 0, 0, 0, 180)
-      orb1.addColorStop(0, 'rgba(161,218,48,0.07)')
-      orb1.addColorStop(1, 'rgba(161,218,48,0)')
-      ctx.fillStyle = orb1
-      ctx.fillRect(0, 0, 180, 180)
-
-      const orb2 = ctx.createRadialGradient(W, H, 0, W, H, 160)
-      orb2.addColorStop(0, 'rgba(161,218,48,0.05)')
-      orb2.addColorStop(1, 'rgba(161,218,48,0)')
-      ctx.fillStyle = orb2
-      ctx.fillRect(W - 160, H - 160, 160, 160)
     }
 
     draw()
@@ -156,13 +130,13 @@ const ParticleCanvas = () => {
 /* ─── Icons ─────────────────────────────────────────────── */
 const SendIcon = () => (
   <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
-    stroke={BG_DEEP} strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+    stroke={CREAM} strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
     <line x1="22" y1="2" x2="11" y2="13" />
-    <polygon points="22 2 15 22 11 13 2 9 22 2" fill={BG_DEEP} />
+    <polygon points="22 2 15 22 11 13 2 9 22 2" fill={CREAM} />
   </svg>
 )
 
-const XIcon = ({ size = 16, color = 'rgba(255,255,255,0.55)' }) => (
+const XIcon = ({ size = 16, color = 'rgba(26,26,22,0.55)' }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none"
     stroke={color} strokeWidth="2.5" strokeLinecap="round">
     <line x1="18" y1="6" x2="6" y2="18" />
@@ -170,17 +144,13 @@ const XIcon = ({ size = 16, color = 'rgba(255,255,255,0.55)' }) => (
   </svg>
 )
 
-/* ─── FAB Icon: Delta D ──────────────────────────────────── */
-const DIcon = ({ size = 26 }) => (
+/* ─── FAB Icon: Delta D (a literal "D" mark, ticket-stub style) ── */
+const DIcon = ({ size = 26, color = INK }) => (
   <svg width={size} height={size} viewBox="0 0 44 44" fill="none">
     <path
       d="M13 11H21.8C28.8 11 34.5 16.7 34.5 23C34.5 29.3 28.8 35 21.8 35H13V11Z"
-      fill="none" stroke={BG_DEEP} strokeWidth="2.6"
+      fill="none" stroke={color} strokeWidth="2.6"
       strokeLinejoin="round" strokeLinecap="round"
-    />
-    <path
-      d="M17.5 16.5H21.8C26.1 16.5 29.5 19.4 29.5 23C29.5 26.6 26.1 29.5 21.8 29.5H17.5V16.5Z"
-      fill={`${BG_DEEP}55`}
     />
   </svg>
 )
@@ -188,22 +158,14 @@ const DIcon = ({ size = 26 }) => (
 /* ─── Avatar ─────────────────────────────────────────────── */
 const BotAvatar = () => (
   <div style={{
-    width: 42, height: 42, borderRadius: 13,
-    background: BRAND,
+    width: 40, height: 40, borderRadius: 10,
+    background: TERRACOTTA,
     display: 'flex', alignItems: 'center', justifyContent: 'center',
     flexShrink: 0,
     position: 'relative', overflow: 'hidden',
-    boxShadow: `0 0 0 2px ${BRAND_DIM}0.25), 0 4px 16px ${BRAND_DIM}0.2)`,
+    border: `1px solid ${TERRACOTTA_DEEP}`,
   }}>
-    <div style={{
-      position: 'absolute', top: -12, left: -8,
-      width: 16, height: 80,
-      background: 'rgba(255,255,255,0.25)',
-      transform: 'rotate(28deg)',
-      animation: 'ddAvatarShimmer 3s ease-in-out infinite',
-      pointerEvents: 'none',
-    }} />
-    <DIcon size={22} />
+    <DIcon size={20} color={CREAM} />
   </div>
 )
 
@@ -212,8 +174,8 @@ const TypingDots = () => (
   <div style={{ display: 'flex', gap: 5, alignItems: 'center', padding: '2px 0' }}>
     {[0, 1, 2].map(i => (
       <div key={i} style={{
-        width: 7, height: 7, borderRadius: '50%',
-        background: BRAND,
+        width: 6, height: 6, borderRadius: '50%',
+        background: TERRACOTTA,
         animation: 'ddTyping 1.3s ease-in-out infinite',
         animationDelay: `${i * 0.19}s`,
         opacity: 0.3,
@@ -229,7 +191,7 @@ export default function DeltaAssistant() {
   const [isOpen, setIsOpen] = useState(false)
   const [messages, setMessages] = useState([{
     role: 'assistant',
-    content: "Hey! 👋 I'm Delta Assistant.\n\nHow can I help your business today?",
+    content: "Hey! I'm the Delta Assistant.\n\nHow can I help your business today?",
     time: new Date(),
   }])
   const [input, setInput] = useState('')
@@ -247,6 +209,13 @@ export default function DeltaAssistant() {
   useEffect(() => {
     if (!isOpen && messages.length > 1) setHasUnread(true)
   }, [messages, isOpen])
+
+  useEffect(() => {
+    document.body.style.overflow = isOpen && window.innerWidth < 640 ? 'hidden' : ''
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [isOpen])
 
   const openChat = () => {
     setIsOpen(true)
@@ -281,7 +250,7 @@ export default function DeltaAssistant() {
     } catch {
       setMessages(prev => [...prev, {
         role: 'assistant',
-        content: '⚡ Connection failed. Please try again in a moment.',
+        content: 'Connection failed. Please try again in a moment.',
         time: new Date(),
       }])
     } finally {
@@ -299,15 +268,14 @@ export default function DeltaAssistant() {
     <>
       {/* ── Global Styles ── */}
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500;1,9..144,600&family=Inter:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap');
 
-        /* ── Keyframes ── */
         @keyframes ddTyping {
           0%,60%,100%{ transform:translateY(0); opacity:.3; }
           30%{ transform:translateY(-6px); opacity:1; }
         }
         @keyframes ddSlideUp {
-          from{ opacity:0; transform:translateY(18px) scale(0.96); }
+          from{ opacity:0; transform:translateY(18px) scale(0.97); }
           to  { opacity:1; transform:translateY(0) scale(1); }
         }
         @keyframes ddFadeIn {
@@ -315,35 +283,13 @@ export default function DeltaAssistant() {
           to  { opacity:1; transform:translateY(0); }
         }
         @keyframes ddPulse {
-          0%  { transform:scale(1); opacity:.6; }
-          70% { transform:scale(1.9); opacity:0; }
-          100%{ transform:scale(1.9); opacity:0; }
+          0%  { transform:scale(1); opacity:.5; }
+          70% { transform:scale(1.8); opacity:0; }
+          100%{ transform:scale(1.8); opacity:0; }
         }
         @keyframes ddBlink {
-          0%,100%{ opacity:1; box-shadow:0 0 8px rgba(161,218,48,0.9); }
-          50%    { opacity:.25; box-shadow:0 0 3px rgba(161,218,48,0.3); }
-        }
-        @keyframes ddAvatarShimmer {
-          0%  { left:-30px; }
-          60% { left:60px; }
-          100%{ left:60px; }
-        }
-        @keyframes ddFabShimmer {
-          0%  { left:-50px; }
-          55% { left:90px; }
-          100%{ left:90px; }
-        }
-        @keyframes ddOrbit {
-          from { transform: rotate(0deg); }
-          to   { transform: rotate(360deg); }
-        }
-        @keyframes ddHdrLine {
-          0%  { transform:translateX(-100%); }
-          100%{ transform:translateX(400%); }
-        }
-        @keyframes ddGlow {
-          0%,100%{ box-shadow:0 0 0 0 rgba(161,218,48,0), 0 8px 30px rgba(30,60,10,0.5); }
-          50%    { box-shadow:0 0 20px 6px rgba(161,218,48,0.22), 0 8px 30px rgba(30,60,10,0.5); }
+          0%,100%{ opacity:1; }
+          50%    { opacity:.3; }
         }
         @keyframes ddBadgePop {
           0%  { transform:scale(0); }
@@ -354,136 +300,108 @@ export default function DeltaAssistant() {
           from{ opacity:0; transform:translateY(6px); }
           to  { opacity:1; transform:translateY(0); }
         }
-        @keyframes ddCornerPulse {
-          0%,100%{ opacity:0.4; }
-          50%{ opacity:1; }
-        }
 
-        /* ── Component classes ── */
         .dd-window {
-          animation: ddSlideUp 0.38s cubic-bezier(0.22,1,0.36,1) forwards;
-          font-family: 'Outfit', sans-serif;
+          animation: ddSlideUp 0.32s cubic-bezier(0.22,1,0.36,1) forwards;
+          font-family: 'Inter', sans-serif;
         }
-        .dd-msg { animation: ddFadeIn 0.3s ease forwards; }
+        .dd-msg { animation: ddFadeIn 0.28s ease forwards; }
 
         .dd-scroll::-webkit-scrollbar { width: 3px; }
         .dd-scroll::-webkit-scrollbar-track { background: transparent; }
         .dd-scroll::-webkit-scrollbar-thumb {
-          background: rgba(161,218,48,0.22);
+          background: rgba(232,99,44,0.3);
           border-radius: 8px;
         }
 
         .dd-input {
-          font-family: 'Outfit', sans-serif !important;
+          font-family: 'Inter', sans-serif !important;
           transition: border-color 0.2s, box-shadow 0.2s;
         }
         .dd-input:focus {
           outline: none !important;
-          border-color: rgba(161,218,48,0.55) !important;
-          box-shadow: 0 0 0 3px rgba(161,218,48,0.08) !important;
+          border-color: ${TERRACOTTA} !important;
+          box-shadow: 0 0 0 3px rgba(232,99,44,0.1) !important;
         }
-        .dd-input::placeholder { color: rgba(255,255,255,0.18); }
+        .dd-input::placeholder { color: rgba(26,26,22,0.35); }
 
         .dd-send {
-          transition: transform 0.18s, box-shadow 0.18s;
+          transition: transform 0.18s, background 0.18s;
         }
         .dd-send:hover:not(:disabled) {
-          transform: scale(1.1);
-          box-shadow: 0 6px 24px rgba(161,218,48,0.45) !important;
+          background: ${TERRACOTTA_DEEP} !important;
+          transform: scale(1.06);
         }
-        .dd-send:disabled { opacity: 0.28; cursor: not-allowed; }
+        .dd-send:disabled { opacity: 0.35; cursor: not-allowed; }
 
         .dd-quick {
           transition: all 0.2s;
-          font-family: 'Outfit', sans-serif;
-          animation: ddQuickFade 0.35s ease forwards;
+          font-family: 'Inter', sans-serif;
+          animation: ddQuickFade 0.32s ease forwards;
         }
         .dd-quick:hover {
-          background: rgba(161,218,48,0.16) !important;
-          border-color: rgba(161,218,48,0.55) !important;
-          color: rgba(255,255,255,0.9) !important;
-          transform: translateY(-2px);
-          box-shadow: 0 4px 18px rgba(161,218,48,0.15);
+          background: ${TERRACOTTA} !important;
+          border-color: ${TERRACOTTA} !important;
+          color: ${CREAM} !important;
         }
 
         .dd-close-btn {
-          transition: background 0.18s;
+          transition: background 0.18s, border-color .18s;
         }
         .dd-close-btn:hover {
-          background: rgba(255,255,255,0.14) !important;
+          background: ${CREAM_DEEP} !important;
+          border-color: ${TERRACOTTA} !important;
         }
 
         .dd-fab-btn {
           transition: transform 0.22s cubic-bezier(0.34,1.56,0.64,1);
         }
-        .dd-fab-btn:hover { transform: scale(1.12) !important; }
+        .dd-fab-btn:hover { transform: scale(1.08) !important; }
 
-        .dd-hdr-shine {
-          position: absolute; top: 0; height: 100%;
-          width: 35%; left: -35%;
-          background: linear-gradient(90deg, transparent, rgba(255,255,255,0.04), transparent);
-          animation: ddHdrLine 5s ease-in-out infinite 2s;
-          pointer-events: none;
+        @media (max-width: 639px) {
+          .dd-window {
+            top: auto !important;
+            right: 0 !important;
+            left: 0 !important;
+            bottom: 0 !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            height: 88vh !important;
+            border-radius: 16px 16px 0 0 !important;
+          }
         }
       `}</style>
 
       {/* ══ FAB BUTTON ════════════════════════════════════ */}
-      <div style={{ position: 'fixed', top: 28, right: 28, zIndex: 9999 }}>
+      <div style={{ position: 'fixed', bottom: 22, right: 18, zIndex: 9999 }}>
 
-        {/* Tooltip */}
+        {/* Tooltip (desktop only, hover) */}
         {!isOpen && fabHover && (
           <div style={{
-            position: 'absolute', top: 78, right: 0,
-            background: '#111a08',
-            border: `1px solid ${BRAND_DIM}0.22)`,
-            borderRadius: 12, padding: '8px 14px',
-            color: 'rgba(255,255,255,0.82)', fontSize: 12,
-            fontFamily: "'Outfit', sans-serif", fontWeight: 500,
+            position: 'absolute', bottom: 72, right: 0,
+            background: INK,
+            border: `1px solid ${TERRACOTTA}`,
+            borderRadius: 6, padding: '8px 14px',
+            color: CREAM, fontSize: 12,
+            fontFamily: "'Inter', sans-serif", fontWeight: 500,
             whiteSpace: 'nowrap',
-            boxShadow: '0 12px 32px rgba(0,0,0,0.6)',
+            boxShadow: '0 12px 28px rgba(26,26,22,0.35)',
             pointerEvents: 'none',
-            letterSpacing: '0.01em',
             zIndex: 10,
           }}>
-            💬 Chat with Delta Assistant
-            <div style={{
-              position: 'absolute', top: -6, right: 22,
-              width: 10, height: 10,
-              background: '#111a08',
-              border: `1px solid ${BRAND_DIM}0.22)`,
-              borderBottom: 'none', borderRight: 'none',
-              transform: 'rotate(45deg)',
-            }} />
+            Chat with Delta Assistant
           </div>
         )}
 
         {/* Pulse rings */}
-        {!isOpen && [0, 0.75, 1.5].map((delay, i) => (
+        {!isOpen && [0, 0.9].map((delay, i) => (
           <div key={i} style={{
             position: 'absolute', inset: 0, borderRadius: '50%',
-            border: `1.5px solid ${BRAND_DIM}0.38)`,
-            animation: `ddPulse 2.5s ease-out ${delay}s infinite`,
+            border: `1.5px solid ${TERRACOTTA_DIM}0.4)`,
+            animation: `ddPulse 2.6s ease-out ${delay}s infinite`,
             pointerEvents: 'none',
           }} />
         ))}
-
-        {/* Orbit ring */}
-        {!isOpen && (
-          <div style={{
-            position: 'absolute', inset: -14,
-            borderRadius: '50%',
-            border: `1px dashed ${BRAND_DIM}0.18)`,
-            animation: 'ddOrbit 10s linear infinite',
-            pointerEvents: 'none',
-          }}>
-            <div style={{
-              position: 'absolute', top: -3.5, left: '50%', marginLeft: -3.5,
-              width: 7, height: 7, borderRadius: '50%',
-              background: BRAND,
-              boxShadow: `0 0 10px ${BRAND}`,
-            }} />
-          </div>
-        )}
 
         {/* FAB */}
         <button
@@ -491,52 +409,31 @@ export default function DeltaAssistant() {
           onMouseEnter={() => setFabHover(true)}
           onMouseLeave={() => setFabHover(false)}
           onClick={() => isOpen ? closeChat() : openChat()}
+          aria-label={isOpen ? 'Close chat' : 'Open chat'}
           style={{
-            width: 64, height: 64,
+            width: 58, height: 58,
             borderRadius: '50%',
-            border: `2px solid ${BRAND_DIM}0.3)`,
+            border: `2px solid ${TERRACOTTA_DEEP}`,
             cursor: 'pointer',
-            background: BG_DEEP,
+            background: TERRACOTTA,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             position: 'relative', overflow: 'hidden',
-            animation: 'ddGlow 3s ease-in-out infinite',
+            boxShadow: '0 10px 30px rgba(196,77,28,0.4)',
           }}
         >
-          {/* Inner lime circle */}
-          <div style={{
-            position: 'absolute', inset: 6,
-            borderRadius: '50%',
-            background: BRAND,
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            overflow: 'hidden',
-          }}>
-            {/* Shimmer */}
-            <div style={{
-              position: 'absolute', top: -12, left: -20,
-              width: 14, height: 80,
-              background: 'rgba(255,255,255,0.3)',
-              transform: 'rotate(28deg)',
-              animation: 'ddFabShimmer 2.8s ease-in-out infinite',
-              pointerEvents: 'none',
-            }} />
-            {isOpen
-              ? <XIcon size={18} color={BG_DEEP} />
-              : <DIcon size={24} />
-            }
-          </div>
+          {isOpen ? <XIcon size={18} color={CREAM} /> : <DIcon size={24} color={CREAM} />}
         </button>
 
         {/* Unread badge */}
         {hasUnread && !isOpen && (
           <div style={{
-            position: 'absolute', top: -5, right: -5,
-            width: 22, height: 22, borderRadius: '50%',
-            background: '#ef4444',
-            color: 'white', fontSize: 11, fontWeight: 700,
-            fontFamily: "'Outfit', sans-serif",
+            position: 'absolute', top: -4, right: -4,
+            width: 20, height: 20, borderRadius: '50%',
+            background: INK,
+            color: CREAM, fontSize: 10, fontWeight: 700,
+            fontFamily: "'Space Mono', monospace",
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            border: `2.5px solid ${BG_DEEP}`,
-            boxShadow: '0 2px 10px rgba(239,68,68,0.7)',
+            border: `2px solid ${CREAM}`,
             animation: 'ddBadgePop 0.35s cubic-bezier(0.34,1.56,0.64,1) forwards',
           }}>1</div>
         )}
@@ -546,80 +443,58 @@ export default function DeltaAssistant() {
       {isOpen && (
         <div className="dd-window" style={{
           position: 'fixed',
-          top: 108, right: 28,
-          width: 420,
-          maxWidth: 'calc(100vw - 36px)',
-          height: 610,
-          background: BG_DEEP,
-          borderRadius: 24,
+          bottom: 92, right: 18,
+          width: 380,
+          maxWidth: 'calc(100vw - 28px)',
+          height: 560,
+          maxHeight: 'calc(100vh - 110px)',
+          background: PAPER,
+          borderRadius: 12,
           overflow: 'hidden',
-          border: `1px solid ${BRAND_DIM}0.16)`,
+          border: `1px solid ${LINE}`,
           display: 'flex', flexDirection: 'column',
           zIndex: 9998,
-          boxShadow: [
-            '0 40px 100px rgba(0,0,0,0.8)',
-            '0 0 0 1px rgba(255,255,255,0.04)',
-            'inset 0 1px 0 rgba(255,255,255,0.06)',
-          ].join(','),
+          boxShadow: '0 30px 70px rgba(26,26,22,0.25)',
         }}>
 
           {/* ── HEADER ── */}
           <div style={{
             padding: '14px 16px',
-            background: BG_MID,
+            background: CREAM_DEEP,
             display: 'flex', alignItems: 'center', gap: 12,
-            borderBottom: `1px solid ${BRAND_DIM}0.1)`,
+            borderBottom: `1px solid ${LINE}`,
             flexShrink: 0,
-            position: 'relative', overflow: 'hidden',
           }}>
-            <div className="dd-hdr-shine" />
-            {/* Header glow orbs */}
-            <div style={{
-              position: 'absolute', top: -50, left: -30,
-              width: 180, height: 180,
-              background: `radial-gradient(circle, ${BRAND_DIM}0.07) 0%, transparent 65%)`,
-              pointerEvents: 'none',
-            }} />
-            <div style={{
-              position: 'absolute', bottom: -40, right: -10,
-              width: 140, height: 140,
-              background: `radial-gradient(circle, ${BRAND_DIM}0.04) 0%, transparent 65%)`,
-              pointerEvents: 'none',
-            }} />
-
             <BotAvatar />
 
-            <div style={{ flex: 1 }}>
+            <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{
-                color: '#e8f5d0',
-                fontFamily: "'Outfit', sans-serif",
-                fontWeight: 800, fontSize: 14,
-                letterSpacing: '0.07em', textTransform: 'uppercase',
+                color: INK,
+                fontFamily: "'Fraunces', serif",
+                fontWeight: 500, fontSize: 15,
               }}>Delta Assistant</div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 3 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 2 }}>
                 <div style={{
-                  width: 7, height: 7, borderRadius: '50%',
-                  background: BRAND,
+                  width: 6, height: 6, borderRadius: '50%',
+                  background: TERRACOTTA,
                   animation: 'ddBlink 3s ease-in-out infinite',
                 }} />
                 <span style={{
-                  fontSize: 11, color: 'rgba(255,255,255,0.32)',
-                  fontFamily: "'Space Grotesk', sans-serif", fontWeight: 400,
-                }}>Online · Replies instantly</span>
+                  fontSize: 11, color: MUTED,
+                  fontFamily: "'Space Mono', monospace",
+                }}>Online · replies instantly</span>
               </div>
             </div>
 
             {/* AI badge */}
             <div style={{
               fontSize: 9, fontWeight: 700,
-              color: BRAND,
-              fontFamily: "'Space Grotesk', monospace",
-              letterSpacing: '0.1em',
-              background: `${BRAND_DIM}0.1)`,
-              border: `1px solid ${BRAND_DIM}0.22)`,
-              padding: '3px 8px', borderRadius: 7,
-              marginRight: 4,
-              textTransform: 'uppercase',
+              color: TERRACOTTA_DEEP,
+              fontFamily: "'Space Mono', monospace",
+              letterSpacing: '0.08em',
+              background: PAPER,
+              border: `1px solid ${LINE}`,
+              padding: '3px 7px', borderRadius: 3,
             }}>AI</div>
 
             {/* Close */}
@@ -627,12 +502,14 @@ export default function DeltaAssistant() {
               className="dd-close-btn"
               onClick={closeChat}
               title="Close chat"
+              aria-label="Close chat"
               style={{
-                width: 32, height: 32, borderRadius: 9,
-                border: 'none',
-                background: 'rgba(255,255,255,0.06)',
+                width: 30, height: 30, borderRadius: 6,
+                border: `1px solid ${LINE}`,
+                background: PAPER,
                 cursor: 'pointer',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
+                flexShrink: 0,
               }}
             >
               <XIcon size={13} />
@@ -644,31 +521,11 @@ export default function DeltaAssistant() {
             flex: 1, overflowY: 'auto',
             padding: '16px 14px',
             display: 'flex', flexDirection: 'column', gap: 14,
-            background: BG_DEEP,
+            background: CREAM,
             position: 'relative',
           }}>
-            {/* Animated canvas background */}
             <ParticleCanvas />
 
-            {/* Corner accent lines */}
-            <div style={{
-              position: 'absolute', top: 12, left: 12,
-              width: 20, height: 20,
-              borderTop: `1.5px solid ${BRAND_DIM}0.3)`,
-              borderLeft: `1.5px solid ${BRAND_DIM}0.3)`,
-              pointerEvents: 'none', zIndex: 1,
-              animation: 'ddCornerPulse 3s ease-in-out infinite',
-            }} />
-            <div style={{
-              position: 'absolute', bottom: 12, right: 12,
-              width: 20, height: 20,
-              borderBottom: `1.5px solid ${BRAND_DIM}0.3)`,
-              borderRight: `1.5px solid ${BRAND_DIM}0.3)`,
-              pointerEvents: 'none', zIndex: 1,
-              animation: 'ddCornerPulse 3s ease-in-out infinite 1.5s',
-            }} />
-
-            {/* Messages */}
             {messages.map((msg, i) => {
               const isUser = msg.role === 'user'
               return (
@@ -679,46 +536,34 @@ export default function DeltaAssistant() {
                 }}>
                   <div style={{
                     fontSize: 9, fontWeight: 700,
-                    letterSpacing: '0.14em', textTransform: 'uppercase',
+                    letterSpacing: '0.1em', textTransform: 'uppercase',
                     marginBottom: 5,
-                    fontFamily: "'Space Grotesk', monospace",
-                    color: isUser ? `${BRAND_DIM}0.55)` : 'rgba(255,255,255,0.2)',
+                    fontFamily: "'Space Mono', monospace",
+                    color: isUser ? TERRACOTTA_DEEP : MUTED,
                   }}>
-                    {isUser ? 'You' : '△ Delta'}
+                    {isUser ? 'You' : 'Delta'}
                   </div>
 
                   <div style={{
-                    maxWidth: '80%',
-                    padding: '11px 15px',
-                    borderRadius: isUser ? '18px 3px 18px 18px' : '3px 18px 18px 18px',
-                    background: isUser ? BRAND : 'rgba(255,255,255,0.045)',
-                    color: isUser ? BG_DEEP : 'rgba(255,255,255,0.82)',
-                    fontSize: 13.5, lineHeight: 1.68,
+                    maxWidth: '82%',
+                    padding: '10px 14px',
+                    borderRadius: isUser ? '12px 3px 12px 12px' : '3px 12px 12px 12px',
+                    background: isUser ? TERRACOTTA : PAPER,
+                    color: isUser ? CREAM : INK,
+                    fontSize: 13.5, lineHeight: 1.6,
                     whiteSpace: 'pre-wrap',
-                    fontFamily: "'Outfit', sans-serif",
-                    fontWeight: isUser ? 600 : 400,
-                    border: isUser ? 'none' : `1px solid ${BRAND_DIM}0.1)`,
-                    boxShadow: isUser
-                      ? `0 5px 20px ${BRAND_DIM}0.28), inset 0 1px 0 rgba(255,255,255,0.2)`
-                      : '0 2px 10px rgba(0,0,0,0.3)',
-                    position: 'relative', overflow: 'hidden',
-                    backdropFilter: 'blur(4px)',
+                    fontFamily: "'Inter', sans-serif",
+                    fontWeight: isUser ? 500 : 400,
+                    border: isUser ? 'none' : `1px solid ${LINE}`,
                   }}>
-                    {isUser && (
-                      <div style={{
-                        position: 'absolute', inset: 0,
-                        background: 'linear-gradient(135deg, rgba(255,255,255,0.14) 0%, transparent 55%)',
-                        pointerEvents: 'none',
-                      }} />
-                    )}
                     {msg.content}
                   </div>
 
                   <span style={{
                     fontSize: 9,
-                    color: 'rgba(255,255,255,0.14)',
+                    color: 'rgba(26,26,22,0.3)',
                     marginTop: 4,
-                    fontFamily: "'Space Grotesk', monospace",
+                    fontFamily: "'Space Mono', monospace",
                   }}>{fmt(msg.time)}</span>
                 </div>
               )
@@ -728,18 +573,17 @@ export default function DeltaAssistant() {
             {isTyping && (
               <div className="dd-msg" style={{ position: 'relative', zIndex: 1 }}>
                 <div style={{
-                  fontSize: 9, fontWeight: 700, letterSpacing: '0.14em',
+                  fontSize: 9, fontWeight: 700, letterSpacing: '0.1em',
                   textTransform: 'uppercase', marginBottom: 5,
-                  fontFamily: "'Space Grotesk', monospace",
-                  color: 'rgba(255,255,255,0.2)',
-                }}>△ Delta</div>
+                  fontFamily: "'Space Mono', monospace",
+                  color: MUTED,
+                }}>Delta</div>
                 <div style={{
-                  padding: '11px 15px',
-                  borderRadius: '3px 18px 18px 18px',
-                  background: 'rgba(255,255,255,0.045)',
-                  border: `1px solid ${BRAND_DIM}0.1)`,
+                  padding: '10px 14px',
+                  borderRadius: '3px 12px 12px 12px',
+                  background: PAPER,
+                  border: `1px solid ${LINE}`,
                   width: 'fit-content',
-                  backdropFilter: 'blur(4px)',
                 }}>
                   <TypingDots />
                 </div>
@@ -753,14 +597,14 @@ export default function DeltaAssistant() {
             <div style={{
               padding: '10px 14px 8px',
               display: 'flex', flexWrap: 'wrap', gap: 7,
-              background: BG_MID,
-              borderTop: `1px solid ${BRAND_DIM}0.07)`,
+              background: CREAM_DEEP,
+              borderTop: `1px solid ${LINE}`,
               flexShrink: 0,
             }}>
               <div style={{
                 width: '100%', fontSize: 9, fontWeight: 700,
-                color: 'rgba(255,255,255,0.18)', letterSpacing: '0.14em',
-                fontFamily: "'Space Grotesk', monospace",
+                color: MUTED, letterSpacing: '0.1em',
+                fontFamily: "'Space Mono', monospace",
                 textTransform: 'uppercase', marginBottom: 2,
               }}>Quick start</div>
               {QUICK_REPLIES.map((item, i) => (
@@ -769,13 +613,13 @@ export default function DeltaAssistant() {
                   className="dd-quick"
                   onClick={() => sendMessage(item)}
                   style={{
-                    border: `1px solid ${BRAND_DIM}0.2)`,
+                    border: `1px solid ${LINE}`,
                     padding: '6px 12px',
                     borderRadius: 20, cursor: 'pointer',
-                    background: `${BRAND_DIM}0.06)`,
-                    color: 'rgba(255,255,255,0.6)',
+                    background: PAPER,
+                    color: INK,
                     fontSize: 11.5, fontWeight: 500,
-                    animationDelay: `${i * 0.07}s`,
+                    animationDelay: `${i * 0.06}s`,
                     opacity: 0,
                   }}
                 >{item}</button>
@@ -787,8 +631,8 @@ export default function DeltaAssistant() {
           <div style={{
             padding: '10px 12px',
             display: 'flex', gap: 9, alignItems: 'flex-end',
-            background: BG_MID,
-            borderTop: `1px solid rgba(255,255,255,0.05)`,
+            background: CREAM_DEEP,
+            borderTop: `1px solid ${LINE}`,
             flexShrink: 0,
           }}>
             <textarea
@@ -801,23 +645,23 @@ export default function DeltaAssistant() {
               className="dd-input"
               style={{
                 flex: 1, resize: 'none',
-                borderRadius: 13,
-                border: `1px solid rgba(255,255,255,0.08)`,
-                background: 'rgba(255,255,255,0.04)',
-                padding: '10px 14px',
-                color: 'white', fontSize: 13.5, lineHeight: 1.5,
+                borderRadius: 8,
+                border: `1px solid ${LINE}`,
+                background: PAPER,
+                padding: '10px 13px',
+                color: INK, fontSize: 13.5, lineHeight: 1.5,
               }}
             />
             <button
               className="dd-send"
               onClick={() => sendMessage()}
               disabled={!input.trim() || isTyping}
+              aria-label="Send message"
               style={{
-                width: 44, height: 44, flexShrink: 0,
-                borderRadius: 13, border: 'none', cursor: 'pointer',
-                background: BRAND,
+                width: 42, height: 42, flexShrink: 0,
+                borderRadius: 8, border: 'none', cursor: 'pointer',
+                background: TERRACOTTA,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                boxShadow: `0 4px 18px ${BRAND_DIM}0.35)`,
               }}
             >
               <SendIcon />
@@ -826,23 +670,16 @@ export default function DeltaAssistant() {
 
           {/* ── FOOTER ── */}
           <div style={{
-            textAlign: 'center', padding: '5px 0 10px',
-            background: BG_MID,
-            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5,
+            textAlign: 'center', padding: '6px 0 10px',
+            background: CREAM_DEEP,
             flexShrink: 0,
           }}>
-            <svg width="9" height="9" viewBox="0 0 36 36" fill="none">
-              <path
-                d="M10 8H19C24.5228 8 29 12.4772 29 18C29 23.5228 24.5228 28 19 28H10V8Z"
-                stroke={`${BRAND_DIM}0.35)`} strokeWidth="2.5" fill="none" strokeLinejoin="round"
-              />
-            </svg>
             <span style={{
-              fontSize: 10, color: 'rgba(255,255,255,0.12)',
-              fontFamily: "'Space Grotesk', monospace", letterSpacing: '0.04em',
+              fontSize: 10, color: MUTED,
+              fontFamily: "'Space Mono', monospace",
             }}>
               Powered by{' '}
-              <span style={{ color: `${BRAND_DIM}0.4)`, fontWeight: 600 }}>
+              <span style={{ color: TERRACOTTA_DEEP, fontWeight: 700 }}>
                 Delta Developers
               </span>
             </span>

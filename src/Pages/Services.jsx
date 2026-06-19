@@ -19,303 +19,291 @@ import {
 } from "lucide-react";
 
 const services = [
-  // SMALL BUSINESS SERVICES FIRST
-
   {
     icon: Scissors,
-    title: "Salon & Beauty Websites",
-    tag: "SALON",
+    title: "Salon & beauty websites",
+    tag: "Salon",
     image:
       "https://images.unsplash.com/photo-1560066984-138dadb4c035?q=80&w=1200&auto=format&fit=crop",
-    desc:
-      "Professional salon websites with booking systems, pricing pages, and AI-powered assistants.",
+    desc: "Professional salon websites with booking systems, pricing pages, and AI-powered assistants.",
     tech: ["Booking System", "React", "SEO", "AI Assistant"],
   },
-
   {
     icon: Building2,
-    title: "Real Estate Property Websites",
-    tag: "REAL ESTATE",
+    title: "Real estate property websites",
+    tag: "Real Estate",
     image:
       "https://images.unsplash.com/photo-1560518883-ce09059eeffa?q=80&w=1200&auto=format&fit=crop",
-    desc:
-      "Modern real estate websites with property listings, lead forms, maps, and CRM integration.",
+    desc: "Modern real estate websites with property listings, lead forms, maps, and CRM integration.",
     tech: ["Property CMS", "Google Maps", "React", "CRM"],
   },
-
   {
     icon: MessageCircle,
-    title: "WhatsApp AI Chat Assistant",
-    tag: "WHATSAPP",
+    title: "WhatsApp AI chat assistant",
+    tag: "WhatsApp",
     image:
       "https://images.unsplash.com/photo-1611162616305-c69b3fa7fbe0?q=80&w=1200&auto=format&fit=crop",
-    desc:
-      "AI chatbot for WhatsApp that instantly replies to customers and automates orders.",
+    desc: "AI chatbot for WhatsApp that instantly replies to customers and automates orders.",
     tech: ["WhatsApp API", "OpenAI", "Automation", "CRM"],
   },
-
   {
     icon: Phone,
-    title: "24/7 Appointment Booking AI",
-    tag: "BOOKING AI",
+    title: "24/7 appointment booking AI",
+    tag: "Booking AI",
     image:
       "https://images.unsplash.com/photo-1521791136064-7986c2920216?q=80&w=1200&auto=format&fit=crop",
-    desc:
-      "Voice AI assistant for salons, clinics, restaurants, and service businesses.",
+    desc: "Voice AI assistant for salons, clinics, restaurants, and service businesses.",
     tech: ["Voice AI", "Calendars", "SMS", "Automation"],
   },
-
   {
     icon: Store,
-    title: "Local Business Websites",
-    tag: "SMALL BUSINESS",
+    title: "Local business websites",
+    tag: "Small Business",
     image:
       "https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?q=80&w=1200&auto=format&fit=crop",
-    desc:
-      "Professional websites for gyms, restaurants, clinics, shops, and local businesses.",
+    desc: "Professional websites for gyms, restaurants, clinics, shops, and local businesses.",
     tech: ["React", "SEO", "Mobile Design", "Fast Hosting"],
   },
-
   {
     icon: Headset,
-    title: "Customer Support AI Agent",
-    tag: "SUPPORT AI",
+    title: "Customer support AI agent",
+    tag: "Support AI",
     image:
       "https://images.unsplash.com/photo-1551434678-e076c223a692?q=80&w=1200&auto=format&fit=crop",
-    desc:
-      "AI-powered support systems that answer customer questions 24/7 automatically.",
+    desc: "AI-powered support systems that answer customer questions 24/7 automatically.",
     tech: ["OpenAI", "Chatbot", "Automation", "CRM"],
   },
-
-  // OTHER SERVICES
-
   {
     icon: Bot,
-    title: "AI Chatbot Integration",
-    tag: "CHATBOT",
+    title: "AI chatbot integration",
+    tag: "Chatbot",
     image:
       "https://images.unsplash.com/photo-1677442136019-21780ecad995?q=80&w=1200&auto=format&fit=crop",
-    desc:
-      "Custom AI assistants for support, lead generation, and workflow automation.",
+    desc: "Custom AI assistants for support, lead generation, and workflow automation.",
     tech: ["OpenAI", "LangChain", "FastAPI", "React"],
   },
-
   {
     icon: Globe,
-    title: "Restaurant AI Website",
-    tag: "RESTAURANT",
+    title: "Restaurant AI website",
+    tag: "Restaurant",
     image:
       "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=1200&auto=format&fit=crop",
-    desc:
-      "Restaurant websites with online ordering, reservations, and AI customer service.",
+    desc: "Restaurant websites with online ordering, reservations, and AI customer service.",
     tech: ["Next.js", "Stripe", "Booking System", "Tailwind"],
   },
-
   {
     icon: LayoutDashboard,
-    title: "Smart CRM Dashboard",
+    title: "Smart CRM dashboard",
     tag: "CRM",
     image:
       "https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1200&auto=format&fit=crop",
-    desc:
-      "Manage sales, reports, customers, and analytics in one smart business dashboard.",
+    desc: "Manage sales, reports, customers, and analytics in one smart business dashboard.",
     tech: [".NET", "React", "PostgreSQL", "Analytics"],
   },
-
   {
     icon: ShoppingCart,
-    title: "Small Business E-Commerce",
-    tag: "STORE",
+    title: "Small business e-commerce",
+    tag: "Store",
     image:
       "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=1200&auto=format&fit=crop",
-    desc:
-      "Online stores with payment systems, inventory tracking, and AI recommendations.",
+    desc: "Online stores with payment systems, inventory tracking, and AI recommendations.",
     tech: ["Shopify", "Stripe", "React", "Inventory"],
   },
-
   {
     icon: Database,
-    title: "Inventory Management System",
-    tag: "INVENTORY",
+    title: "Inventory management system",
+    tag: "Inventory",
     image:
       "https://images.unsplash.com/photo-1553413077-190dd305871c?q=80&w=1200&auto=format&fit=crop",
-    desc:
-      "Warehouse and stock management software with automation and reporting.",
+    desc: "Warehouse and stock management software with automation and reporting.",
     tech: ["Python", ".NET", "SQL", "Automation"],
   },
-
   {
     icon: BrainCircuit,
-    title: "AI Auto Reply System",
-    tag: "AUTOMATION",
+    title: "AI auto reply system",
+    tag: "Automation",
     image:
       "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1200&auto=format&fit=crop",
-    desc:
-      "Automated replies for websites, WhatsApp, Messenger, and Instagram using AI.",
+    desc: "Automated replies for websites, WhatsApp, Messenger, and Instagram using AI.",
     tech: ["WhatsApp API", "OpenAI", "Automation", "CRM"],
   },
-
   {
     icon: Rocket,
     title: "Startup & SaaS MVP",
-    tag: "STARTUP",
+    tag: "Startup",
     image:
       "https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=1200&auto=format&fit=crop",
-    desc:
-      "Launch scalable SaaS products with authentication, billing, and dashboards.",
+    desc: "Launch scalable SaaS products with authentication, billing, and dashboards.",
     tech: ["Next.js", "Supabase", "Stripe", "Tailwind"],
   },
 ];
 
 export default function Services() {
   return (
-    <main className="bg-black min-h-screen text-white overflow-hidden">
-      {/* HERO */}
-      <section className="relative pt-28 pb-16 px-6">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[700px] bg-lime-400/10 blur-[160px]" />
+    <>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500;1,9..144,600&family=Inter:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap');
 
-        <div className="max-w-7xl mx-auto relative z-10">
-          <p className="text-lime-400 uppercase tracking-[0.35em] text-xs font-bold">
-            ● AI SERVICES FOR SMALL BUSINESSES
-          </p>
+        :root{
+          --cream:#fbf8f2; --cream-deep:#f3eee2; --paper:#ffffff; --ink:#1a1a16;
+          --ink-soft:#3c3a32; --muted:#6b6a5c; --muted-soft:#8c8a78;
+          --terracotta:#e8632c; --terracotta-deep:#c44d1c; --terracotta-tint:#fbe4d6;
+          --pine:#2f4f3a; --pine-deep:#203a29; --pine-tint:#e3ebe2; --line:#d8d2c2; --line-soft:#e7e2d4;
+        }
+        body{ margin:0; background:var(--cream); }
+        .ww-root{ background:var(--cream); color:var(--ink); font-family:'Inter',sans-serif; }
+        .ww-root .font-display{ font-family:'Fraunces',serif; }
+        .ww-root .font-mono{ font-family:'Space Mono',monospace; }
+        .ww-root .eyebrow{
+          font-family:'Space Mono',monospace; font-size:11px; letter-spacing:0.14em;
+          text-transform:uppercase; color:var(--terracotta-deep); font-weight:700;
+          display:inline-flex; align-items:center; gap:8px;
+        }
+        .ww-root .eyebrow::before{ content:''; width:6px; height:6px; border-radius:50%; background:var(--terracotta); flex-shrink:0; }
+        .ww-root .card{ background:var(--paper); border:1px solid var(--line); border-radius:4px; }
+        .grain-bg{ background-image: radial-gradient(circle at 1px 1px, rgba(26,26,22,0.04) 1px, transparent 0); background-size:16px 16px; }
 
-          <h1 className="mt-5 text-5xl md:text-7xl font-black leading-none tracking-tight">
-            AI Systems &
-            <span className="text-lime-400 italic block mt-2">
-              Business Websites
-            </span>
-          </h1>
+        .ww-root .stub{
+          position:relative; display:inline-flex; align-items:center; gap:6px;
+          padding:5px 14px 5px 12px; background:var(--paper); border:1px solid var(--ink);
+          font-family:'Space Mono',monospace; font-size:10px; letter-spacing:0.06em;
+          text-transform:uppercase; font-weight:700; color:var(--ink); border-radius:2px;
+          white-space:nowrap;
+        }
 
-          <p className="mt-6 max-w-2xl text-white/50 text-lg leading-relaxed">
-            We build AI-powered websites, dashboards, booking systems,
-            chat assistants, and automation tools for salons, restaurants,
-            real estate agencies, clinics, gyms, shops, and local businesses.
-          </p>
-        </div>
-      </section>
+        .ww-root .btn-primary{
+          display:inline-flex; align-items:center; justify-content:center; gap:8px;
+          background:var(--terracotta); color:var(--cream); font-weight:700; font-size:14px;
+          padding:15px 26px; border-radius:3px; border:1px solid var(--terracotta);
+          transition:background .2s ease, transform .2s ease;
+        }
+        .ww-root .btn-primary:hover{ background:var(--terracotta-deep); transform:translateY(-1px); }
+      `}</style>
 
-      {/* SERVICES GRID */}
-      <section className="px-6 pb-28">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-7">
-          {services.map((service, index) => {
-            const Icon = service.icon;
+      <main className="ww-root grain-bg min-h-screen">
+        {/* HERO */}
+        <section className="px-5 sm:px-8 pt-14 sm:pt-20 pb-12 sm:pb-16">
+          <div className="max-w-[1200px] mx-auto">
+            <div className="eyebrow mb-6">AI services for small businesses</div>
 
-            return (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 35 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{
-                  duration: 0.45,
-                  delay: index * 0.04,
-                }}
-                viewport={{ once: true }}
-              >
-                <Link
-                  to={`/contact?service=${encodeURIComponent(
-                    service.title
-                  )}`}
-                  className="group block h-full rounded-[30px] overflow-hidden border border-lime-400/10 bg-[#071106] hover:border-lime-400/40 transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_0_40px_rgba(163,230,53,0.08)]"
+            <h1 className="font-display leading-[0.98] font-medium text-[40px] sm:text-[60px] lg:text-[68px]">
+              AI systems &
+              <span className="block italic text-[var(--terracotta)] mt-1">
+                business websites
+              </span>
+            </h1>
+
+            <p className="mt-6 max-w-2xl text-[var(--muted)] text-base sm:text-lg leading-[1.75]">
+              We build AI-powered websites, dashboards, booking systems, chat
+              assistants, and automation tools for salons, restaurants, real
+              estate agencies, clinics, gyms, shops, and local businesses.
+            </p>
+          </div>
+        </section>
+
+        {/* SERVICES GRID */}
+        <section className="px-5 sm:px-8 pb-16 sm:pb-24">
+          <div className="max-w-[1200px] mx-auto grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 sm:gap-6">
+            {services.map((service, index) => {
+              const Icon = service.icon;
+
+              return (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 24 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.35, delay: Math.min(index * 0.03, 0.25) }}
+                  viewport={{ once: true }}
                 >
-                  {/* IMAGE */}
-                  <div className="relative h-[240px] overflow-hidden">
-                    <img
-                      src={service.image}
-                      alt={service.title}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                    />
+                  <Link
+                    to={`/contact?service=${encodeURIComponent(service.title)}`}
+                    className="card group block h-full overflow-hidden hover:border-[var(--terracotta)] transition-colors duration-200"
+                  >
+                    {/* IMAGE */}
+                    <div className="relative h-[200px] sm:h-[220px] overflow-hidden">
+                      <img
+                        src={service.image}
+                        alt={service.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
 
-                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-[var(--ink)]/55 via-[var(--ink)]/5 to-transparent" />
 
-                    {/* BADGES */}
-                    <div className="absolute top-4 left-4">
-                      <span className="px-3 py-1 rounded-full bg-lime-400/20 border border-lime-400/20 text-[10px] font-bold uppercase tracking-widest text-lime-300 backdrop-blur-md">
-                        ● LIVE
-                      </span>
-                    </div>
-
-                    <div className="absolute top-4 right-4">
-                      <span className="px-3 py-1 rounded-full bg-black/60 border border-white/10 text-[10px] font-bold uppercase tracking-widest text-lime-300 backdrop-blur-md">
-                        {service.tag}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* CONTENT */}
-                  <div className="p-6 flex flex-col h-[340px]">
-                    {/* TITLE */}
-                    <div className="flex items-start gap-4">
-                      <div className="w-12 h-12 rounded-2xl bg-lime-400/10 border border-lime-400/20 flex items-center justify-center flex-shrink-0">
-                        <Icon className="w-5 h-5 text-lime-400" />
+                      <div className="absolute top-3.5 left-3.5">
+                        <span className="stub bg-[var(--paper)]/95">Live</span>
                       </div>
 
-                      <h2 className="text-[22px] md:text-[24px] leading-[1.05] font-black tracking-tight text-white group-hover:text-lime-400 transition-colors line-clamp-3">
-                        {service.title}
-                      </h2>
-                    </div>
-
-                    {/* DESCRIPTION */}
-                    <p className="mt-4 text-white/55 text-[15px] leading-relaxed min-h-[88px] line-clamp-4">
-                      {service.desc}
-                    </p>
-
-                    {/* TECH STACK */}
-                    <div className="mt-5 flex flex-wrap gap-2 min-h-[72px] content-start">
-                      {service.tech.map((tech, i) => (
-                        <span
-                          key={i}
-                          className="px-3 py-1 rounded-full bg-lime-400/5 border border-lime-400/10 text-[11px] font-semibold text-lime-200"
-                        >
-                          {tech}
+                      <div className="absolute top-3.5 right-3.5">
+                        <span className="px-2.5 py-1.5 bg-[var(--terracotta)] text-[var(--cream)] text-[10px] font-mono font-bold uppercase tracking-wider rounded-sm">
+                          {service.tag}
                         </span>
-                      ))}
-                    </div>
-
-                    {/* BUTTON */}
-                    <div className="mt-auto pt-6">
-                      <div className="flex items-center justify-between rounded-2xl border border-lime-400/20 bg-lime-400/5 px-5 py-4 group-hover:bg-lime-400/10 transition-all duration-300">
-                        <span className="text-sm font-bold text-lime-300 tracking-wide">
-                          View Service
-                        </span>
-
-                        <ArrowRight className="w-4 h-4 text-lime-300 group-hover:translate-x-1 transition-transform duration-300" />
                       </div>
                     </div>
-                  </div>
 
-                  {/* GLOW */}
-                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
-                    <div className="absolute -top-20 right-0 w-40 h-40 bg-lime-400/10 blur-3xl" />
-                  </div>
-                </Link>
-              </motion.div>
-            );
-          })}
-        </div>
-      </section>
+                    {/* CONTENT */}
+                    <div className="p-5 sm:p-6 flex flex-col">
+                      <div className="flex items-start gap-3.5">
+                        <div className="w-10 h-10 rounded-[3px] bg-[var(--pine-tint)] border border-[var(--pine)] flex items-center justify-center flex-shrink-0">
+                          <Icon className="w-[18px] h-[18px] text-[var(--pine)]" />
+                        </div>
 
-      {/* CTA */}
-      <section className="px-6 pb-28">
-        <div className="max-w-7xl mx-auto rounded-[40px] border border-lime-400/10 bg-gradient-to-b from-lime-400/10 to-transparent p-14 text-center">
-          <h2 className="text-4xl md:text-6xl font-black leading-tight">
-            Ready to automate your
-            <span className="text-lime-400"> business?</span>
-          </h2>
+                        <h2 className="font-display text-xl leading-[1.15] font-medium text-[var(--ink)] group-hover:text-[var(--terracotta)] transition-colors duration-200">
+                          {service.title}
+                        </h2>
+                      </div>
 
-          <p className="mt-5 text-white/50 max-w-2xl mx-auto text-lg">
-            We create AI assistants, websites, booking systems, dashboards,
-            and automation tools designed to grow modern businesses faster.
-          </p>
+                      <p className="mt-4 text-[var(--muted)] text-sm leading-relaxed">
+                        {service.desc}
+                      </p>
 
-          <Link
-            to="/contact"
-            className="inline-flex items-center gap-3 mt-10 px-8 py-4 rounded-full bg-lime-400 text-black font-black uppercase tracking-wider hover:scale-105 transition-all duration-300"
-          >
-            Hire Us
-            <ArrowRight className="w-5 h-5" />
-          </Link>
-        </div>
-      </section>
-    </main>
+                      <div className="mt-4 flex flex-wrap gap-1.5">
+                        {service.tech.map((tech, i) => (
+                          <span
+                            key={i}
+                            className="px-2.5 py-1 rounded-full bg-[var(--cream-deep)] border border-[var(--line)] text-[11px] font-medium text-[var(--ink-soft)]"
+                          >
+                            {tech}
+                          </span>
+                        ))}
+                      </div>
+
+                      <div className="mt-5 flex items-center justify-between rounded-[3px] border border-[var(--line)] bg-[var(--cream)] px-4 py-3 group-hover:bg-[var(--terracotta-tint)] group-hover:border-[var(--terracotta)] transition-all duration-200">
+                        <span className="text-sm font-semibold text-[var(--ink)]">
+                          View service
+                        </span>
+                        <ArrowRight className="w-4 h-4 text-[var(--terracotta)] group-hover:translate-x-1 transition-transform duration-200" />
+                      </div>
+                    </div>
+                  </Link>
+                </motion.div>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* CTA */}
+        <section className="px-5 sm:px-8 pb-16 sm:pb-24">
+          <div className="max-w-[1200px] mx-auto card p-8 sm:p-14 text-center">
+            <h2 className="font-display text-3xl sm:text-5xl lg:text-6xl font-medium leading-tight">
+              Ready to automate your
+              <span className="italic text-[var(--terracotta)]"> business?</span>
+            </h2>
+
+            <p className="mt-5 text-[var(--muted)] max-w-2xl mx-auto text-base sm:text-lg leading-relaxed">
+              We create AI assistants, websites, booking systems, dashboards,
+              and automation tools designed to grow modern businesses faster.
+            </p>
+
+            <Link
+              to="/contact"
+              className="btn-primary inline-flex mt-9"
+            >
+              Hire us
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+        </section>
+      </main>
+    </>
   );
 }
