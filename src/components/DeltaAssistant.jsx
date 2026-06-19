@@ -45,10 +45,10 @@ const ParticleCanvas = () => {
     }
     window.addEventListener('resize', resize)
 
-    const PARTICLES = Array.from({ length: 28 }, () => ({
+    const PARTICLES = Array.from({ length: 24 }, () => ({
       x: Math.random() * W,
       y: Math.random() * H,
-      r: Math.random() * 1.6 + 0.4,
+      r: Math.random() * 2 + 1,
       vx: (Math.random() - 0.5) * 0.22,
       vy: (Math.random() - 0.5) * 0.22,
       alpha: Math.random() * 0.4 + 0.08,
@@ -67,7 +67,7 @@ const ParticleCanvas = () => {
 
       ctx.lineWidth = 0.5
       GRID_LINES.forEach(l => {
-        ctx.strokeStyle = 'rgba(232,99,44,0.035)'
+        ctx.strokeStyle = 'rgba(196,77,28,0.05)'
         ctx.beginPath()
         if (l.type === 'v') { ctx.moveTo(l.pos, 0); ctx.lineTo(l.pos, H) }
         else { ctx.moveTo(0, l.pos); ctx.lineTo(W, l.pos) }
@@ -82,11 +82,11 @@ const ParticleCanvas = () => {
         if (p.y < 0) p.y = H
         if (p.y > H) p.y = 0
 
-        p.alpha = 0.1 + 0.25 * Math.abs(Math.sin(frame * 0.012 + p.x))
+        p.alpha = 0.35 + 0.4 * Math.abs(Math.sin(frame * 0.012 + p.x))
 
         ctx.beginPath()
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2)
-        ctx.fillStyle = `rgba(232,99,44,${p.alpha})`
+        ctx.fillStyle = `rgba(196,77,28,${p.alpha})`
         ctx.fill()
       })
 
@@ -96,8 +96,8 @@ const ParticleCanvas = () => {
           const dy = PARTICLES[i].y - PARTICLES[j].y
           const dist = Math.sqrt(dx * dx + dy * dy)
           if (dist < 90) {
-            ctx.strokeStyle = `rgba(232,99,44,${0.06 * (1 - dist / 90)})`
-            ctx.lineWidth = 0.6
+            ctx.strokeStyle = `rgba(196,77,28,${0.14 * (1 - dist / 90)})`
+            ctx.lineWidth = 0.7
             ctx.beginPath()
             ctx.moveTo(PARTICLES[i].x, PARTICLES[i].y)
             ctx.lineTo(PARTICLES[j].x, PARTICLES[j].y)
@@ -241,6 +241,7 @@ export default function DeltaAssistant() {
           messages: updatedMessages.map(m => ({ role: m.role, content: m.content })),
         }),
       })
+      if (!res.ok) throw new Error('Bad response')
       const data = await res.json()
       setMessages(prev => [...prev, {
         role: 'assistant',
@@ -250,8 +251,10 @@ export default function DeltaAssistant() {
     } catch {
       setMessages(prev => [...prev, {
         role: 'assistant',
-        content: 'Connection failed. Please try again in a moment.',
+        content: "Couldn't reach the server. Check your connection and try again.",
         time: new Date(),
+        isError: true,
+        retryText: userText,
       }])
     } finally {
       setIsTyping(false)
@@ -342,6 +345,14 @@ export default function DeltaAssistant() {
         .dd-quick:hover {
           background: ${TERRACOTTA} !important;
           border-color: ${TERRACOTTA} !important;
+          color: ${CREAM} !important;
+        }
+
+        .dd-retry {
+          transition: background 0.18s, color 0.18s;
+        }
+        .dd-retry:hover {
+          background: ${TERRACOTTA} !important;
           color: ${CREAM} !important;
         }
 
@@ -449,12 +460,12 @@ export default function DeltaAssistant() {
           height: 560,
           maxHeight: 'calc(100vh - 110px)',
           background: PAPER,
-          borderRadius: 12,
+          borderRadius: 14,
           overflow: 'hidden',
           border: `1px solid ${LINE}`,
           display: 'flex', flexDirection: 'column',
           zIndex: 9998,
-          boxShadow: '0 30px 70px rgba(26,26,22,0.25)',
+          boxShadow: '0 4px 16px rgba(26,26,22,0.08), 0 30px 60px rgba(26,26,22,0.22)',
         }}>
 
           {/* ── HEADER ── */}
@@ -528,6 +539,7 @@ export default function DeltaAssistant() {
 
             {messages.map((msg, i) => {
               const isUser = msg.role === 'user'
+              const isError = !!msg.isError
               return (
                 <div key={i} className="dd-msg" style={{
                   display: 'flex', flexDirection: 'column',
@@ -539,25 +551,46 @@ export default function DeltaAssistant() {
                     letterSpacing: '0.1em', textTransform: 'uppercase',
                     marginBottom: 5,
                     fontFamily: "'Space Mono', monospace",
-                    color: isUser ? TERRACOTTA_DEEP : MUTED,
+                    color: isUser ? TERRACOTTA_DEEP : (isError ? '#a13f1f' : MUTED),
                   }}>
-                    {isUser ? 'You' : 'Delta'}
+                    {isUser ? 'You' : isError ? 'Delta · connection issue' : 'Delta'}
                   </div>
 
                   <div style={{
                     maxWidth: '82%',
                     padding: '10px 14px',
                     borderRadius: isUser ? '12px 3px 12px 12px' : '3px 12px 12px 12px',
-                    background: isUser ? TERRACOTTA : PAPER,
+                    background: isUser ? TERRACOTTA : (isError ? '#fdf0e8' : PAPER),
                     color: isUser ? CREAM : INK,
                     fontSize: 13.5, lineHeight: 1.6,
                     whiteSpace: 'pre-wrap',
                     fontFamily: "'Inter', sans-serif",
                     fontWeight: isUser ? 500 : 400,
-                    border: isUser ? 'none' : `1px solid ${LINE}`,
+                    border: isUser ? 'none' : `1px solid ${isError ? '#e8b89a' : LINE}`,
+                    borderStyle: isError ? 'dashed' : 'solid',
                   }}>
                     {msg.content}
                   </div>
+
+                  {isError && (
+                    <button
+                      className="dd-retry"
+                      onClick={() => sendMessage(msg.retryText)}
+                      style={{
+                        marginTop: 6,
+                        display: 'inline-flex', alignItems: 'center', gap: 6,
+                        border: `1px solid ${TERRACOTTA}`,
+                        background: PAPER,
+                        color: TERRACOTTA_DEEP,
+                        fontSize: 11.5, fontWeight: 600,
+                        padding: '5px 12px', borderRadius: 20,
+                        cursor: 'pointer',
+                        fontFamily: "'Inter', sans-serif",
+                      }}
+                    >
+                      ↻ Retry
+                    </button>
+                  )}
 
                   <span style={{
                     fontSize: 9,
