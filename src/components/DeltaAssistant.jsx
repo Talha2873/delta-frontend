@@ -1,16 +1,24 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 
 /* ═══════════════════════════════════════════════════════════
-   DELTA DEVELOPERS — AI CHAT WIDGET (v2)
+   DELTA DEVELOPERS — AI CHAT WIDGET (v3)
    "Warm Workshop": Terracotta #e8632c | Cream #fbf8f2 | Ink #1a1a16
    Fraunces (display) + Inter (body) + Space Mono (labels)
 
-   Changes from v1:
-   - Error state now offers a direct path to a human (WhatsApp/Calendly)
-     instead of just "try again" — if your backend is down, the visitor
-     shouldn't hit a dead end.
-   - Everything else kept as-is; the original implementation (particle
-     canvas, typing indicator, quick replies) was already strong.
+   Changes from v2:
+   - Mic button on the input row: tap to speak, speech is transcribed
+     live via the Web Speech API and dropped into the text box as a
+     normal, editable prompt (not auto-sent — the visitor can still
+     review/edit before hitting send). Falls back gracefully (button
+     hidden) on browsers without SpeechRecognition support (e.g. Firefox).
+   - Automatic "continue on the Contact page" handoff: every backend
+     reply now carries `lead_profile.services_of_interest`. The first
+     time a service is detected, a persistent banner appears above the
+     input with a deep link to /contact?service=...&message=... so the
+     visitor doesn't have to re-explain anything — the conversation
+     summary and the matched service ride along automatically.
+   - Everything else (particle canvas, typing indicator, quick replies,
+     error → WhatsApp fallback) kept as in v2.
 ═══════════════════════════════════════════════════════════ */
 
 const TERRACOTTA = '#e8632c'
@@ -22,10 +30,13 @@ const CREAM_DEEP = '#f3eee2'
 const PAPER = '#ffffff'
 const LINE = '#d8d2c2'
 const MUTED = '#6b6a5c'
+const PINE = '#2f4f3a'
+const PINE_TINT = '#e3ebe2'
 
 // TODO: keep in sync with the Calendly URL used elsewhere.
 const CALENDLY_URL = 'https://calendly.com/your-handle/intro-call'
 const WHATSAPP_URL = 'https://wa.me/19132035960'
+const CONTACT_PATH = '/contact' // React Router route for Contact.jsx
 
 const QUICK_REPLIES = [
   'I need a website for my business',
@@ -33,6 +44,19 @@ const QUICK_REPLIES = [
   'I want to automate my work',
   'I need a WhatsApp chatbot',
 ]
+
+// Backend (views.py DELTA_SERVICES) → exact <select> option strings on the
+// Contact page. These must match Contact.jsx's <option> text verbatim, or
+// the dropdown won't preselect anything. Each backend service maps to the
+// closest-fit contact-form option; ambiguous ones default to a sensible pick.
+const SERVICE_TO_CONTACT_OPTION = {
+  'AI Chatbots': 'AI Chatbot Integration',
+  'Websites': 'Business Website',
+  'Web Applications': 'Full Stack Web App',
+  'Automation Systems': 'AI Business Automation',
+  'Custom Software': 'Custom Solution',
+  'AI Solutions': 'AI Business Automation',
+}
 
 /* ─── Canvas Particle Background ───────────────────────── */
 const ParticleCanvas = () => {
@@ -165,6 +189,32 @@ const DIcon = ({ size = 26, color = INK }) => (
   </svg>
 )
 
+// Mic — outline state (idle, ready to record)
+const MicIcon = ({ size = 16, color = INK }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none"
+    stroke={color} strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
+    <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+    <line x1="12" y1="19" x2="12" y2="23" />
+    <line x1="8" y1="23" x2="16" y2="23" />
+  </svg>
+)
+
+// Solid square — recording / tap-to-stop state
+const StopIcon = ({ size = 13, color = CREAM }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill={color}>
+    <rect x="5" y="5" width="14" height="14" rx="2" />
+  </svg>
+)
+
+const ArrowRightIcon = ({ size = 13, color = CREAM }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none"
+    stroke={color} strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+    <line x1="5" y1="12" x2="19" y2="12" />
+    <polyline points="12 5 19 12 12 19" />
+  </svg>
+)
+
 const BotAvatar = () => (
   <div style={{
     width: 40, height: 40, borderRadius: 10,
@@ -192,6 +242,15 @@ const TypingDots = () => (
   </div>
 )
 
+/* ─── Speech Recognition helper ────────────────────────────
+   Wraps the (vendor-prefixed) Web Speech API behind a small hook-like
+   factory so the component body stays readable. Returns null on
+   unsupported browsers so callers can hide the mic button entirely. */
+const getSpeechRecognitionCtor = () => {
+  if (typeof window === 'undefined') return null
+  return window.SpeechRecognition || window.webkitSpeechRecognition || null
+}
+
 /* ═══════════════════════════════════════════════════════════
    MAIN COMPONENT
 ═══════════════════════════════════════════════════════════ */
@@ -207,6 +266,17 @@ export default function DeltaAssistant() {
   const [hasUnread, setHasUnread] = useState(false)
   const [fabHover, setFabHover] = useState(false)
   const [consecutiveErrors, setConsecutiveErrors] = useState(0)
+
+  // Voice input state
+  const [isListening, setIsListening] = useState(false)
+  const [micSupported, setMicSupported] = useState(true)
+  const [micError, setMicError] = useState('')
+  const recognitionRef = useRef(null)
+  const baseInputRef = useRef('') // input text captured before this recording session started
+
+  // Detected-service → Contact page handoff
+  const [matchedService, setMatchedService] = useState(null) // backend service name, e.g. "AI Chatbots"
+  const [conversationSummary, setConversationSummary] = useState('')
 
   const messagesEndRef = useRef(null)
   const inputRef = useRef(null)
@@ -226,18 +296,106 @@ export default function DeltaAssistant() {
     }
   }, [isOpen])
 
+  // Detect Web Speech API support once on mount.
+  useEffect(() => {
+    setMicSupported(!!getSpeechRecognitionCtor())
+  }, [])
+
+  // Clean up any in-flight recognition session on unmount.
+  useEffect(() => {
+    return () => {
+      recognitionRef.current?.abort?.()
+    }
+  }, [])
+
   const openChat = () => {
     setIsOpen(true)
     setHasUnread(false)
     setTimeout(() => inputRef.current?.focus(), 280)
   }
 
-  const closeChat = () => setIsOpen(false)
+  const closeChat = () => {
+    setIsOpen(false)
+    recognitionRef.current?.abort?.()
+    setIsListening(false)
+  }
+
+  /* ── Voice input: start/stop a recognition session ── */
+  const startListening = useCallback(() => {
+    const Ctor = getSpeechRecognitionCtor()
+    if (!Ctor) {
+      setMicSupported(false)
+      return
+    }
+    setMicError('')
+    baseInputRef.current = input ? input + ' ' : ''
+
+    const recognition = new Ctor()
+    recognition.lang = (typeof navigator !== 'undefined' && navigator.language) || 'en-US'
+    recognition.continuous = true
+    recognition.interimResults = true
+
+    recognition.onresult = (event) => {
+      let transcript = ''
+      for (let i = 0; i < event.results.length; i++) {
+        transcript += event.results[i][0].transcript
+      }
+      setInput(baseInputRef.current + transcript)
+    }
+
+    recognition.onerror = (event) => {
+      if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
+        setMicError('Microphone access was blocked. Check your browser permissions.')
+      } else if (event.error === 'no-speech') {
+        setMicError("Didn't catch that — try again.")
+      } else {
+        setMicError('Voice input had a hiccup. You can still type.')
+      }
+      setIsListening(false)
+    }
+
+    recognition.onend = () => {
+      setIsListening(false)
+    }
+
+    recognitionRef.current = recognition
+    try {
+      recognition.start()
+      setIsListening(true)
+    } catch {
+      setMicError('Could not start voice input.')
+      setIsListening(false)
+    }
+  }, [input])
+
+  const stopListening = useCallback(() => {
+    recognitionRef.current?.stop?.()
+    setIsListening(false)
+  }, [])
+
+  const toggleMic = () => {
+    if (isListening) stopListening()
+    else startListening()
+  }
+
+  /* ── Map a backend service name to a one-line conversation recap for
+     the Contact page's message field, so the visitor doesn't retype
+     anything they already told the assistant. ── */
+  const buildHandoffSummary = (allMessages) => {
+    const lastUserMsgs = allMessages
+      .filter(m => m.role === 'user')
+      .slice(-3)
+      .map(m => m.content)
+      .join(' ')
+    return lastUserMsgs.slice(0, 400)
+  }
 
   const sendMessage = useCallback(async text => {
     const userText = (text ?? input).trim()
     if (!userText || isTyping) return
+    if (isListening) stopListening()
     setInput('')
+    setMicError('')
     const userMessage = { role: 'user', content: userText, time: new Date() }
     const updatedMessages = [...messages, userMessage]
     setMessages(updatedMessages)
@@ -253,11 +411,28 @@ export default function DeltaAssistant() {
       if (!res.ok) throw new Error('Bad response')
       const data = await res.json()
       setConsecutiveErrors(0)
-      setMessages(prev => [...prev, {
+
+      const finalMessages = [...updatedMessages, {
         role: 'assistant',
         content: data.reply || 'No response received.',
         time: new Date(),
-      }])
+      }]
+      setMessages(finalMessages)
+
+      // Automatic service detection → Contact page handoff.
+      // Backend returns lead_profile.services_of_interest (see views.py).
+      // We grab the first/most-recent detected service and keep it sticky
+      // for the rest of the session — once a fit is found, the banner stays
+      // so the visitor can act on it whenever they're ready, not just the
+      // instant it first appears.
+      const detected = data?.lead_profile?.services_of_interest
+      if (Array.isArray(detected) && detected.length > 0) {
+        const latest = detected[detected.length - 1]
+        if (SERVICE_TO_CONTACT_OPTION[latest]) {
+          setMatchedService(latest)
+          setConversationSummary(buildHandoffSummary(finalMessages))
+        }
+      }
     } catch {
       setConsecutiveErrors(prev => prev + 1)
       setMessages(prev => [...prev, {
@@ -270,13 +445,28 @@ export default function DeltaAssistant() {
     } finally {
       setIsTyping(false)
     }
-  }, [input, isTyping, messages])
+  }, [input, isTyping, messages, isListening, stopListening])
 
   const handleKeyDown = e => {
     if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage() }
   }
 
   const fmt = d => d?.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) || ''
+
+  // Build the deep link to the Contact page, carrying the matched service
+  // and a short recap of what the visitor told the assistant so they don't
+  // have to repeat themselves in the form's message field.
+  const contactHref = (() => {
+    const params = new URLSearchParams()
+    if (matchedService && SERVICE_TO_CONTACT_OPTION[matchedService]) {
+      params.set('service', SERVICE_TO_CONTACT_OPTION[matchedService])
+    }
+    if (conversationSummary) {
+      params.set('message', conversationSummary)
+    }
+    const query = params.toString()
+    return query ? `${CONTACT_PATH}?${query}` : CONTACT_PATH
+  })()
 
   return (
     <>
@@ -312,6 +502,15 @@ export default function DeltaAssistant() {
           from{ opacity:0; transform:translateY(6px); }
           to  { opacity:1; transform:translateY(0); }
         }
+        @keyframes ddMicPulse {
+          0%  { box-shadow: 0 0 0 0 rgba(232,99,44,0.45); }
+          70% { box-shadow: 0 0 0 9px rgba(232,99,44,0); }
+          100%{ box-shadow: 0 0 0 0 rgba(232,99,44,0); }
+        }
+        @keyframes ddBannerIn {
+          from{ opacity:0; transform:translateY(-6px); max-height:0; }
+          to  { opacity:1; transform:translateY(0); max-height:200px; }
+        }
 
         .dd-window {
           animation: ddSlideUp 0.32s cubic-bezier(0.22,1,0.36,1) forwards;
@@ -345,6 +544,20 @@ export default function DeltaAssistant() {
           transform: scale(1.06);
         }
         .dd-send:disabled { opacity: 0.35; cursor: not-allowed; }
+
+        .dd-mic {
+          transition: transform 0.18s, background 0.18s, border-color 0.18s;
+        }
+        .dd-mic:hover:not(:disabled) {
+          border-color: ${TERRACOTTA} !important;
+          transform: scale(1.06);
+        }
+        .dd-mic.is-listening {
+          background: ${TERRACOTTA} !important;
+          border-color: ${TERRACOTTA_DEEP} !important;
+          animation: ddMicPulse 1.6s ease-out infinite;
+        }
+        .dd-mic:disabled { opacity: 0.35; cursor: not-allowed; }
 
         .dd-quick {
           transition: all 0.2s;
@@ -386,8 +599,19 @@ export default function DeltaAssistant() {
         }
         .dd-fab-btn:hover { transform: scale(1.08) !important; }
 
+        .dd-service-banner {
+          animation: ddBannerIn 0.3s ease forwards;
+        }
+        .dd-service-cta {
+          transition: background 0.18s, transform 0.18s;
+        }
+        .dd-service-cta:hover {
+          background: ${PINE} !important;
+          transform: translateY(-1px);
+        }
+
         @media (prefers-reduced-motion: reduce) {
-          .dd-window, .dd-msg, .dd-quick { animation: none !important; }
+          .dd-window, .dd-msg, .dd-quick, .dd-mic.is-listening, .dd-service-banner { animation: none !important; }
         }
 
         @media (max-width: 639px) {
@@ -606,7 +830,7 @@ export default function DeltaAssistant() {
                         ↻ Retry
                       </button>
 
-                      {/* NEW: after repeated failures, offer a direct path to
+                      {/* after repeated failures, offer a direct path to
                           a human instead of letting the visitor hit a dead end. */}
                       {consecutiveErrors >= 2 && (
                         <a
@@ -663,6 +887,52 @@ export default function DeltaAssistant() {
             <div ref={messagesEndRef} />
           </div>
 
+          {/* ── AUTO SERVICE → CONTACT PAGE BANNER ──
+              Appears once the backend's lead_profile signals a matched
+              service. Stays visible for the rest of the session so the
+              visitor can act on it whenever they're ready. */}
+          {matchedService && (
+            <div className="dd-service-banner" style={{
+              margin: '0 14px 10px',
+              padding: '11px 13px',
+              background: PINE_TINT,
+              border: `1px solid ${PINE}`,
+              borderRadius: 8,
+              display: 'flex', alignItems: 'center', gap: 10,
+              flexShrink: 0,
+            }}>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{
+                  fontSize: 9, fontWeight: 700, letterSpacing: '0.08em',
+                  textTransform: 'uppercase', color: PINE,
+                  fontFamily: "'Space Mono', monospace", marginBottom: 3,
+                }}>
+                  Good fit: {SERVICE_TO_CONTACT_OPTION[matchedService]}
+                </div>
+                <div style={{ fontSize: 12, color: INK, fontFamily: "'Inter', sans-serif" }}>
+                  Send the details over and we'll follow up with next steps.
+                </div>
+              </div>
+              <a
+                href={contactHref}
+                className="dd-service-cta"
+                style={{
+                  display: 'inline-flex', alignItems: 'center', gap: 5,
+                  background: PINE,
+                  color: CREAM,
+                  fontSize: 11.5, fontWeight: 700,
+                  padding: '8px 12px', borderRadius: 20,
+                  textDecoration: 'none', whiteSpace: 'nowrap',
+                  fontFamily: "'Inter', sans-serif",
+                  flexShrink: 0,
+                }}
+              >
+                Continue
+                <ArrowRightIcon size={12} color={CREAM} />
+              </a>
+            </div>
+          )}
+
           {/* ── QUICK REPLIES ── */}
           {messages.length <= 2 && (
             <div style={{
@@ -698,10 +968,22 @@ export default function DeltaAssistant() {
             </div>
           )}
 
+          {/* ── MIC ERROR NOTICE ── */}
+          {micError && (
+            <div style={{
+              margin: '0 14px 6px',
+              fontSize: 11, color: TERRACOTTA_DEEP,
+              fontFamily: "'Inter', sans-serif",
+              flexShrink: 0,
+            }}>
+              {micError}
+            </div>
+          )}
+
           {/* ── INPUT ROW ── */}
           <div style={{
             padding: '10px 12px',
-            display: 'flex', gap: 9, alignItems: 'flex-end',
+            display: 'flex', gap: 8, alignItems: 'flex-end',
             background: CREAM_DEEP,
             borderTop: `1px solid ${LINE}`,
             flexShrink: 0,
@@ -711,7 +993,7 @@ export default function DeltaAssistant() {
               value={input}
               onChange={e => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="Ask me anything..."
+              placeholder={isListening ? 'Listening…' : 'Ask me anything...'}
               rows={1}
               className="dd-input"
               style={{
@@ -723,6 +1005,28 @@ export default function DeltaAssistant() {
                 color: INK, fontSize: 13.5, lineHeight: 1.5,
               }}
             />
+
+            {micSupported && (
+              <button
+                className={`dd-mic${isListening ? ' is-listening' : ''}`}
+                onClick={toggleMic}
+                disabled={isTyping}
+                title={isListening ? 'Stop recording' : 'Speak your message'}
+                aria-label={isListening ? 'Stop voice input' : 'Start voice input'}
+                aria-pressed={isListening}
+                style={{
+                  width: 42, height: 42, flexShrink: 0,
+                  borderRadius: 8,
+                  border: `1px solid ${LINE}`,
+                  cursor: 'pointer',
+                  background: isListening ? TERRACOTTA : PAPER,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                }}
+              >
+                {isListening ? <StopIcon /> : <MicIcon color={INK} />}
+              </button>
+            )}
+
             <button
               className="dd-send"
               onClick={() => sendMessage()}

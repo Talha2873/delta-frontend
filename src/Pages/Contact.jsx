@@ -15,11 +15,23 @@ export default function Contact() {
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
   const [submitError, setSubmitError] = useState("");
+  const [prefilledFromChat, setPrefilledFromChat] = useState(false);
 
+  // Pre-fill from the chat widget handoff: ?service=...&message=...
+  // The widget sends `service` as an exact match to one of the <option>
+  // values below, and `message` as a short recap of what the visitor
+  // already told the assistant, so they don't have to retype anything.
   useEffect(() => {
     const serviceFromUrl = searchParams.get("service");
-    if (serviceFromUrl) {
-      setForm((prev) => ({ ...prev, service: serviceFromUrl }));
+    const messageFromUrl = searchParams.get("message");
+
+    if (serviceFromUrl || messageFromUrl) {
+      setForm((prev) => ({
+        ...prev,
+        ...(serviceFromUrl ? { service: serviceFromUrl } : {}),
+        ...(messageFromUrl ? { message: messageFromUrl } : {}),
+      }));
+      setPrefilledFromChat(true);
     }
   }, [searchParams]);
 
@@ -118,6 +130,12 @@ export default function Contact() {
           transition:background .2s ease, transform .2s ease;
         }
         .ww-root .btn-primary:hover{ background:var(--terracotta-deep); transform:translateY(-1px); }
+
+        .ww-root .chat-banner{
+          background:var(--pine-tint); border:1px solid var(--pine); border-radius:3px;
+          padding:12px 16px; font-size:13px; color:var(--pine-deep);
+          display:flex; align-items:center; gap:10px; margin-bottom:24px;
+        }
       `}</style>
 
       <main className="ww-root grain-bg relative min-h-screen">
@@ -221,6 +239,18 @@ export default function Contact() {
                         strategy, timeline, and pricing for your specific situation.
                       </p>
                     </div>
+
+                    {/* Shown only when the visitor arrived from the chat widget,
+                        so the prefilled fields don't look unexplained. */}
+                    {prefilledFromChat && (
+                      <div className="chat-banner">
+                        <span>💬</span>
+                        <span>
+                          We've carried over what you told our assistant — just double-check
+                          the details below and add anything else before sending.
+                        </span>
+                      </div>
+                    )}
 
                     <form onSubmit={handleSubmit} className="space-y-5 sm:space-y-6" noValidate>
                       <div>
