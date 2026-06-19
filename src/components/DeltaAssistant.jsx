@@ -273,6 +273,7 @@ export default function DeltaAssistant() {
   const [micError, setMicError] = useState('')
   const recognitionRef = useRef(null)
   const baseInputRef = useRef('') // input text captured before this recording session started
+  const suppressResultsRef = useRef(false) // true right after a send, so a late onresult can't refill the box
 
   // Detected-service → Contact page handoff
   const [matchedService, setMatchedService] = useState(null) // backend service name, e.g. "AI Chatbots"
@@ -328,6 +329,7 @@ export default function DeltaAssistant() {
       return
     }
     setMicError('')
+    suppressResultsRef.current = false
     baseInputRef.current = input ? input + ' ' : ''
 
     const recognition = new Ctor()
@@ -336,6 +338,7 @@ export default function DeltaAssistant() {
     recognition.interimResults = true
 
     recognition.onresult = (event) => {
+      if (suppressResultsRef.current) return
       let transcript = ''
       for (let i = 0; i < event.results.length; i++) {
         transcript += event.results[i][0].transcript
@@ -393,7 +396,13 @@ export default function DeltaAssistant() {
   const sendMessage = useCallback(async text => {
     const userText = (text ?? input).trim()
     if (!userText || isTyping) return
+
+    // Stop voice input immediately and block any late onresult callback from
+    // repopulating the box right after we clear it (recognition.stop() is
+    // async — onresult can still fire once more before onend runs).
+    suppressResultsRef.current = true
     if (isListening) stopListening()
+
     setInput('')
     setMicError('')
     const userMessage = { role: 'user', content: userText, time: new Date() }
